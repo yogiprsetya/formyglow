@@ -1,17 +1,8 @@
 import type { Metadata } from 'next';
-import localFont from 'next/font/local';
 import './globals.css';
-
-const geistSans = localFont({
-  src: './fonts/GeistVF.woff',
-  variable: '--font-geist-sans',
-  weight: '100 900'
-});
-const geistMono = localFont({
-  src: './fonts/GeistMonoVF.woff',
-  variable: '--font-geist-mono',
-  weight: '100 900'
-});
+import { ThemeProvider } from 'next-themes';
+import { NextAuthProvider } from '~/components/app-shell/NextAuthProvider';
+import { SWRProvider } from '~/components/app-shell/SWRProvider';
 
 export const metadata: Metadata = {
   title: 'Create Next App',
@@ -24,8 +15,23 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
+        <link
+          href="https://fonts.googleapis.com/css2?family=Geist:wght@400;600&display=swap&subset=latin"
+          rel="stylesheet"
+        />
+      </head>
+
+      <body>
+        <ThemeProvider attribute="class" defaultTheme="light">
+          <SWRProvider>
+            <NextAuthProvider>{children}</NextAuthProvider>
+          </SWRProvider>
+        </ThemeProvider>
+      </body>
     </html>
   );
 }

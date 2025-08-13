@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 :root {
+  --font-geist-sans: 'Geist', sans-serif;
+}
+
+:root {
   --background: #ffffff;
   --foreground: #171717;
 }

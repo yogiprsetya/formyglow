@@ -1,5 +1,5 @@
 import { type AxiosError } from 'axios';
-import { toast } from '~/src/hooks/useToast';
+import { toast } from '~/hooks/useToast';
 
 type ResponseType = {
   success: false;
