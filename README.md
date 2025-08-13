@@ -1,36 +1,142 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# FormyGlow - Personal Skincare Management
 
-## Getting Started
+FormyGlow adalah aplikasi web untuk manajemen skincare personal yang membantu pengguna menemukan dan mengelola produk dengan tepat, aman, dan efektif.
 
-First, run the development server:
+## 🌟 Fitur Utama
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### Core Features
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- **Manage Inventory** - Simpan & kelola daftar produk skincare yang dimiliki
+- **Skincare Routine Builder** - Buat rutinitas pagi/malam dengan drag-and-drop
+- **Track Progress** - Upload foto before/after dan catatan perkembangan kulit
+- **Ingredient Cross-Check** - Peringatan jika ada bahan yang tidak boleh digunakan bersamaan
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Smart Features (AI-powered)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Analisis ingredient list
+- Rekomendasi produk alternatif
+- Personalization berdasarkan jenis kulit & masalah kulit
 
-## Learn More
+## 🚀 Tech Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Frontend**: Next.js 14 (App Router) + TypeScript
+- **Authentication**: Next-Auth dengan Google OAuth
+- **Database**: Drizzle ORM + PostgreSQL
+- **State Management**: Zustand
+- **Styling**: Tailwind CSS + Shadcn UI
+- **Image Storage**: Cloudinary (optional)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## 📋 Prerequisites
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- Node.js 18+
+- PostgreSQL database
+- Google OAuth credentials
 
-## Deploy on Vercel
+## 🛠️ Installation
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+1. **Clone repository**
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+   ```bash
+   git clone <repository-url>
+   cd formyglow
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Setup environment variables**
+   Buat file `.env.local` dengan konfigurasi berikut:
+
+   ```env
+   # Database
+   DATABASE_URL="postgresql://username:password@localhost:5432/formyglow"
+
+   # NextAuth
+   NEXTAUTH_URL="http://localhost:3000"
+   NEXTAUTH_SECRET="your-secret-key-here"
+
+   # Google OAuth
+   GOOGLE_CLIENT_ID="your-google-client-id"
+   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+
+   # Cloud Storage (optional)
+   CLOUDINARY_CLOUD_NAME="your-cloud-name"
+   CLOUDINARY_API_KEY="your-api-key"
+   CLOUDINARY_API_SECRET="your-api-secret"
+   ```
+
+4. **Setup database**
+
+   ```bash
+   # Generate migrations
+   npm run db:gen
+
+   # Push to database
+   npm run db:push
+
+   # Seed with sample data
+   npm run db:seed
+   ```
+
+5. **Run development server**
+   ```bash
+   npm run dev
+   ```
+
+## 🗄️ Database Schema
+
+Aplikasi menggunakan struktur database yang terdiri dari:
+
+- **users** - Data pengguna (Next-Auth)
+- **profiles** - Profil tambahan pengguna
+- **ingredients** - Bahan-bahan skincare
+- **products** - Produk skincare
+- **product_ingredients** - Relasi many-to-many produk-bahan
+- **inventory** - Inventori produk pengguna
+- **routines** - Rutinitas skincare
+- **routine_items** - Item dalam rutinitas
+- **progress_photos** - Foto progress
+- **progress_notes** - Catatan progress
+- **ingredient_conflicts** - Konflik bahan
+- **ai_recommendations** - Rekomendasi AI
+
+## 🎨 Design Philosophy
+
+- **Gender-Neutral**: Desain yang nyaman untuk laki-laki dan perempuan
+- **Modern & Clean**: Interface yang bersih dan mudah digunakan
+- **Accessible**: Mengikuti standar aksesibilitas web
+- **Responsive**: Optimal untuk semua ukuran layar
+
+## 📱 Target Audience
+
+- Laki-laki & perempuan usia 24-36
+- Daya beli menengah ke atas
+- Tertarik dengan skincare dan wellness
+- Mencari solusi digital untuk manajemen skincare
+
+## 🔮 Roadmap
+
+- [ ] Mobile app (React Native)
+- [ ] AI-powered skin analysis
+- [ ] Social features & community
+- [ ] Integration dengan e-commerce
+- [ ] Advanced analytics & insights
+
+## 🤝 Contributing
+
+1. Fork repository
+2. Buat feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit changes (`git commit -m 'Add amazing feature'`)
+4. Push ke branch (`git push origin feature/amazing-feature`)
+5. Buat Pull Request
+
+## 📄 License
+
+Distributed under the MIT License. See `LICENSE` for more information.
+
+## 📞 Support
+
+Untuk pertanyaan atau dukungan, silakan buat issue di repository ini.
