@@ -1,99 +1,34 @@
-// import { useSession } from 'next-auth/react';
+'use client';
+
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
-import { Plus, Calendar, TrendingUp, Package, Clock, Star, Sparkles } from 'lucide-react';
+import { Plus, Calendar, TrendingUp, Package, Clock, Star } from 'lucide-react';
 import Link from 'next/link';
 import { StatCard } from '~/components/common/stat-card';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '~/components/ui/skeleton';
+import { useSession } from 'next-auth/react';
+
+const Header = dynamic(() => import('./space-header').then((m) => m.SpaceHeader), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-16 sticky top-0 z-50" />
+});
 
 export default function HomePage() {
-  // const { data: session, status } = useSession();
-
-  // if (status === 'loading') {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600"></div>
-  //     </div>
-  //   );
-  // }
-
-  // if (!session) {
-  //   return (
-  //     <div className="min-h-screen flex items-center justify-center">
-  //       <div className="text-center space-y-6">
-  //         <div className="space-y-2">
-  //           <h1 className="text-4xl font-bold text-gray-900 dark:text-white">FormyGlow</h1>
-  //           <p className="text-xl text-gray-600 dark:text-gray-300">
-  //             Your Personal Skincare Management Assistant
-  //           </p>
-  //         </div>
-  //         <p className="text-gray-500 dark:text-gray-400 max-w-md">
-  //           Discover, manage, and track your skincare journey with AI-powered recommendations and ingredient
-  //           safety checks.
-  //         </p>
-  //         <div className="space-y-4">
-  //           <Button
-  //             asChild
-  //             size="lg"
-  //             className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
-  //           >
-  //             <Link href="/auth/signin">Get Started</Link>
-  //           </Button>
-  //           <div className="flex items-center justify-center space-x-8 text-sm text-gray-500">
-  //             <div className="flex items-center space-x-2">
-  //               <Shield className="h-4 w-4 text-green-500" />
-  //               <span>Ingredient Safety</span>
-  //             </div>
-  //             <div className="flex items-center space-x-2">
-  //               <Sparkles className="h-4 w-4 text-purple-500" />
-  //               <span>AI Recommendations</span>
-  //             </div>
-  //             <div className="flex items-center space-x-2">
-  //               <Heart className="h-4 w-4 text-pink-500" />
-  //               <span>Personalized Care</span>
-  //             </div>
-  //           </div>
-  //         </div>
-  //       </div>
-  //     </div>
-  //   );
-  // }
+  const { data: session } = useSession();
 
   return (
     <div className="min-h-screen">
-      {/* Header */}
-      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <Sparkles className="h-5 w-5 text-white" />
-                </div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">FormyGlow</h1>
-              </div>
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <img
-                  src="https://avatars.githubusercontent.com/u/124599?v=4"
-                  alt="Profile"
-                  className="w-8 h-8 rounded-full"
-                />
-                <span className="text-sm font-medium text-gray-700 dark:text-gray-300">User Name</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Welcome Section */}
         <div className="mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
-            Welcome back, User Name! ✨
+            Welcome back, {session?.user?.name}! ✨
           </h2>
+
           <p className="text-gray-600 dark:text-gray-300">
             Ready to glow? Here&apos;s your skincare overview for today.
           </p>

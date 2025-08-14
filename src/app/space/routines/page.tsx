@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useSession } from 'next-auth/react';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
@@ -9,6 +8,13 @@ import { Input } from '~/components/ui/input';
 import { Plus, Clock, Sun, Moon, Star, Edit, Trash2, Play } from 'lucide-react';
 import Link from 'next/link';
 import { StatCard } from '~/components/common/stat-card';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '~/components/ui/skeleton';
+
+const Header = dynamic(() => import('../space-header').then((m) => m.SpaceHeader), {
+  ssr: false,
+  loading: () => <Skeleton className="w-full h-16 sticky top-0 z-50" />
+});
 
 // Mock data untuk demo
 const mockRoutines = [
@@ -147,23 +153,9 @@ const routineTypes = [
 ];
 
 export default function RoutinesPage() {
-  const { data: session } = useSession();
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('all');
   const [showActiveOnly, setShowActiveOnly] = useState(false);
-
-  if (!session) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold mb-4">Please sign in to continue</h1>
-          <Button asChild>
-            <Link href="/signin">Sign In</Link>
-          </Button>
-        </div>
-      </div>
-    );
-  }
 
   const filteredRoutines = mockRoutines.filter((routine) => {
     const matchesSearch =
@@ -192,24 +184,7 @@ export default function RoutinesPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      {/* Header */}
-      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <Link href="/" className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
-                  <Clock className="h-5 w-5 text-white" />
-                </div>
-                <span className="text-xl font-bold text-gray-900 dark:text-white">FormyGlow</span>
-              </Link>
-            </div>
-            <div className="flex items-center space-x-4">
-              <span className="text-sm text-gray-600 dark:text-gray-300">Welcome, {session.user?.name}</span>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Header />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
