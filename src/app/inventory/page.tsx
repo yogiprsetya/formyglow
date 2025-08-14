@@ -8,6 +8,7 @@ import { Badge } from '~/components/ui/badge';
 import { Input } from '~/components/ui/input';
 import { Plus, Search, Package, Calendar, AlertTriangle, Edit, Trash2, Eye } from 'lucide-react';
 import Link from 'next/link';
+import { StatCard } from '~/components/common/stat-card';
 
 // Mock data untuk demo
 const mockInventory = [
@@ -169,61 +170,28 @@ export default function InventoryPage() {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-3">
-                <Package className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-                <div>
-                  <p className="text-sm font-medium text-blue-600 dark:text-blue-400">Total Products</p>
-                  <p className="text-2xl font-bold text-blue-900 dark:text-blue-100">
-                    {mockInventory.length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <StatCard variant="info" title="Total Products" icon={Package} stat={mockInventory.length} />
 
-          <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-3">
-                <Eye className="h-8 w-8 text-green-600 dark:text-green-400" />
-                <div>
-                  <p className="text-sm font-medium text-green-600 dark:text-green-400">Open Products</p>
-                  <p className="text-2xl font-bold text-green-900 dark:text-green-100">
-                    {mockInventory.filter((item) => item.isOpen).length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <StatCard
+            variant="success"
+            title="Open Products"
+            icon={Eye}
+            stat={mockInventory.filter((item) => item.isOpen).length}
+          />
 
-          <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border-orange-200 dark:border-orange-800">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-3">
-                <AlertTriangle className="h-8 w-8 text-orange-600 dark:text-orange-400" />
-                <div>
-                  <p className="text-sm font-medium text-orange-600 dark:text-orange-400">Expiring Soon</p>
-                  <p className="text-2xl font-bold text-orange-900 dark:text-orange-100">
-                    {getExpiringItems().length}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <StatCard
+            variant="warning"
+            title="Expiring Soon"
+            icon={AlertTriangle}
+            stat={getExpiringItems().length}
+          />
 
-          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-800">
-            <CardContent className="p-4">
-              <div className="flex items-center space-x-3">
-                <Calendar className="h-8 w-8 text-purple-600 dark:text-purple-400" />
-                <div>
-                  <p className="text-sm font-medium text-purple-600 dark:text-purple-400">Categories</p>
-                  <p className="text-2xl font-bold text-purple-900 dark:text-purple-100">
-                    {new Set(mockInventory.map((item) => item.product.category)).size}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+          <StatCard
+            variant="purple"
+            title="Categories"
+            icon={Calendar}
+            stat={new Set(mockInventory.map((item) => item.product.category)).size}
+          />
         </div>
 
         {/* Filters and Search */}

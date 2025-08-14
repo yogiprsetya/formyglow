@@ -4,6 +4,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/com
 import { Badge } from '~/components/ui/badge';
 import { Plus, Calendar, TrendingUp, Package, Clock, Star, Sparkles } from 'lucide-react';
 import Link from 'next/link';
+import { StatCard } from '~/components/common/stat-card';
 
 export default function HomePage() {
   // const { data: session, status } = useSession();
@@ -100,53 +101,18 @@ export default function HomePage() {
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-          <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 border-blue-200 dark:border-blue-800">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-blue-600 dark:text-blue-400">
-                Products in Stock
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-blue-900 dark:text-blue-100">12</div>
-              <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">+2 from last week</p>
-            </CardContent>
-          </Card>
+          <StatCard variant="info" title="Products in Stock" stat="12" textHelper="+2 from last week" />
 
-          <Card className="bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20 border-green-200 dark:border-green-800">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-green-600 dark:text-green-400">
-                Active Routines
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-green-900 dark:text-green-100">3</div>
-              <p className="text-xs text-green-600 dark:text-green-400 mt-1">Morning, Evening, Weekly</p>
-            </CardContent>
-          </Card>
+          <StatCard
+            variant="success"
+            title="Active Routines"
+            stat="3"
+            textHelper="Morning, Evening, Weekly"
+          />
 
-          <Card className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 border-purple-200 dark:border-purple-800">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-purple-600 dark:text-purple-400">
-                Progress Photos
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-purple-900 dark:text-purple-100">8</div>
-              <p className="text-xs text-purple-600 dark:text-purple-400 mt-1">Last updated 3 days ago</p>
-            </CardContent>
-          </Card>
+          <StatCard variant="warning" title="Progress Photos" stat="8" textHelper="Last updated 3 days ago" />
 
-          <Card className="bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20 border-orange-200 dark:border-orange-800">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium text-orange-600 dark:text-orange-400">
-                Expiring Soon
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold text-orange-900 dark:text-orange-100">2</div>
-              <p className="text-xs text-orange-600 dark:text-orange-400 mt-1">Within 30 days</p>
-            </CardContent>
-          </Card>
+          <StatCard variant="purple" title="Expiring Soon" stat="2" textHelper="Within 30 days" />
         </div>
 
         {/* Quick Actions */}
