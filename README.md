@@ -1,142 +1,107 @@
-# FormyGlow - Personal Skincare Management
+# FormyGlow - Skincare Management App
 
-FormyGlow adalah aplikasi web untuk manajemen skincare personal yang membantu pengguna menemukan dan mengelola produk dengan tepat, aman, dan efektif.
+## Struktur Aplikasi
 
-## 🌟 Fitur Utama
+Aplikasi telah direstrukturisasi sesuai dengan permintaan:
 
-### Core Features
+### 1. Halaman Marketing (`/`)
 
-- **Manage Inventory** - Simpan & kelola daftar produk skincare yang dimiliki
-- **Skincare Routine Builder** - Buat rutinitas pagi/malam dengan drag-and-drop
-- **Track Progress** - Upload foto before/after dan catatan perkembangan kulit
-- **Ingredient Cross-Check** - Peringatan jika ada bahan yang tidak boleh digunakan bersamaan
+- **Hero Section**: Menampilkan value proposition utama aplikasi
+- **Benefits**: Fitur-fitur unggulan termasuk PWA installable dan hemat memori
+- **Pricing**:
+  - **Free**: 1 routine, 8 produk, 1 progress tracking
+  - **Pro**: Rp 16k/bulan - 7 routines, 20 produk, 5 progress tracking
+  - **Premium**: Rp 37k/bulan - Unlimited routines, produk, dan progress tracking
 
-### Smart Features (AI-powered)
+### 2. Dashboard & Fitur (`/space`)
 
-- Analisis ingredient list
-- Rekomendasi produk alternatif
-- Personalization berdasarkan jenis kulit & masalah kulit
+- **Dashboard** (`/space`): Halaman utama setelah login
+- **Routines** (`/space/routines`): Manajemen rutinitas skincare
+- **Inventory** (`/space/inventory`): Manajemen produk skincare
+- **Progress** (`/space/progress`): Tracking kemajuan skincare
 
-## 🚀 Tech Stack
+### 3. Autentikasi (`/signin`)
 
-- **Frontend**: Next.js 14 (App Router) + TypeScript
-- **Authentication**: Next-Auth dengan Google OAuth
-- **Database**: Drizzle ORM + PostgreSQL
-- **State Management**: Zustand
-- **Styling**: Tailwind CSS + Shadcn UI
-- **Image Storage**: Cloudinary (optional)
+- Halaman sign in tetap di root level
 
-## 📋 Prerequisites
+## Fitur Utama
 
-- Node.js 18+
-- PostgreSQL database
-- Google OAuth credentials
+### PWA (Progressive Web App)
 
-## 🛠️ Installation
+- **Installable**: Dapat diinstall langsung ke smartphone
+- **Hemat Memori**: Tidak membebani memori smartphone
+- **Offline Capable**: Dapat berfungsi tanpa internet
 
-1. **Clone repository**
+### Manajemen Skincare
 
-   ```bash
-   git clone <repository-url>
-   cd formyglow
-   ```
+- **Routine Management**: Buat dan kelola rutinitas skincare
+- **Product Inventory**: Catat dan kelola produk skincare
+- **Progress Tracking**: Monitor kemajuan dengan foto dan catatan
+- **AI Recommendations**: Rekomendasi produk berdasarkan analisis AI
 
-2. **Install dependencies**
+## Teknologi
 
-   ```bash
-   npm install
-   ```
+- **Frontend**: Next.js 14 dengan TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: Shadcn/ui
+- **Icons**: Lucide React
+- **Architecture**: App Router (Next.js 13+)
 
-3. **Setup environment variables**
-   Buat file `.env.local` dengan konfigurasi berikut:
+## Cara Menjalankan
 
-   ```env
-   # Database
-   DATABASE_URL="postgresql://username:password@localhost:5432/formyglow"
+1. Install dependencies:
 
-   # NextAuth
-   NEXTAUTH_URL="http://localhost:3000"
-   NEXTAUTH_SECRET="your-secret-key-here"
+```bash
+npm install
+```
 
-   # Google OAuth
-   GOOGLE_CLIENT_ID="your-google-client-id"
-   GOOGLE_CLIENT_SECRET="your-google-client-secret"
+2. Jalankan development server:
 
-   # Cloud Storage (optional)
-   CLOUDINARY_CLOUD_NAME="your-cloud-name"
-   CLOUDINARY_API_KEY="your-api-key"
-   CLOUDINARY_API_SECRET="your-api-secret"
-   ```
+```bash
+npm run dev
+```
 
-4. **Setup database**
+3. Buka browser dan akses `http://localhost:3000`
 
-   ```bash
-   # Generate migrations
-   npm run db:gen
+## Struktur File
 
-   # Push to database
-   npm run db:push
+```
+src/app/
+├── page.tsx              # Halaman marketing (landing page)
+├── layout.tsx            # Root layout
+├── signin/               # Halaman sign in
+├── space/                # Dashboard & fitur aplikasi
+│   ├── layout.tsx        # Layout untuk space
+│   ├── page.tsx          # Dashboard utama
+│   ├── routines/         # Manajemen routines
+│   ├── inventory/        # Manajemen inventory
+│   └── progress/         # Progress tracking
+└── api/                  # API routes
+```
 
-   # Seed with sample data
-   npm run db:seed
-   ```
+## Perubahan yang Dilakukan
 
-5. **Run development server**
-   ```bash
-   npm run dev
-   ```
+1. **Restrukturisasi Routing**:
+   - Semua halaman FE kecuali signin dipindah ke `/space`
+   - Halaman home (dashboard) dipindah ke `/space`
+   - Halaman marketing baru dibuat di root `/`
 
-## 🗄️ Database Schema
+2. **Update Link Navigation**:
+   - Semua internal link diperbarui untuk mengarah ke `/space/*`
+   - Link di dashboard, routines, inventory, dan progress sudah diperbarui
 
-Aplikasi menggunakan struktur database yang terdiri dari:
+3. **Halaman Marketing**:
+   - Hero section dengan value proposition
+   - Benefits section highlighting PWA features
+   - Pricing section dengan 3 tier (Free, Pro, Premium)
+   - CTA section untuk conversion
+   - Footer dengan navigasi lengkap
 
-- **users** - Data pengguna (Next-Auth)
-- **profiles** - Profil tambahan pengguna
-- **ingredients** - Bahan-bahan skincare
-- **products** - Produk skincare
-- **product_ingredients** - Relasi many-to-many produk-bahan
-- **inventory** - Inventori produk pengguna
-- **routines** - Rutinitas skincare
-- **routine_items** - Item dalam rutinitas
-- **progress_photos** - Foto progress
-- **progress_notes** - Catatan progress
-- **ingredient_conflicts** - Konflik bahan
-- **ai_recommendations** - Rekomendasi AI
+## Keunggulan PWA
 
-## 🎨 Design Philosophy
-
-- **Gender-Neutral**: Desain yang nyaman untuk laki-laki dan perempuan
-- **Modern & Clean**: Interface yang bersih dan mudah digunakan
-- **Accessible**: Mengikuti standar aksesibilitas web
-- **Responsive**: Optimal untuk semua ukuran layar
-
-## 📱 Target Audience
-
-- Laki-laki & perempuan usia 24-36
-- Daya beli menengah ke atas
-- Tertarik dengan skincare dan wellness
-- Mencari solusi digital untuk manajemen skincare
-
-## 🔮 Roadmap
-
-- [ ] Mobile app (React Native)
-- [ ] AI-powered skin analysis
-- [ ] Social features & community
-- [ ] Integration dengan e-commerce
-- [ ] Advanced analytics & insights
-
-## 🤝 Contributing
-
-1. Fork repository
-2. Buat feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit changes (`git commit -m 'Add amazing feature'`)
-4. Push ke branch (`git push origin feature/amazing-feature`)
-5. Buat Pull Request
-
-## 📄 License
-
-Distributed under the MIT License. See `LICENSE` for more information.
-
-## 📞 Support
-
-Untuk pertanyaan atau dukungan, silakan buat issue di repository ini.
+- **Installable**: Pengguna dapat menginstall aplikasi ke home screen
+- **Hemat Memori**: Menggunakan teknologi web modern yang efisien
+- **Cross-Platform**: Berfungsi di semua device dan browser
+- **Offline Support**: Dapat berfungsi tanpa koneksi internet
+- **Push Notifications**: Dapat mengirim notifikasi penting
+- **Auto-Updates**: Update otomatis tanpa perlu download ulang

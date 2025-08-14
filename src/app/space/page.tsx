@@ -127,19 +127,19 @@ export default function HomePage() {
             </CardHeader>
             <CardContent className="space-y-3">
               <Button asChild className="w-full justify-start" variant="outline">
-                <Link href="/inventory">
+                <Link href="/space/inventory">
                   <Package className="h-4 w-4 mr-2" />
                   Manage Inventory
                 </Link>
               </Button>
               <Button asChild className="w-full justify-start" variant="outline">
-                <Link href="/routines">
+                <Link href="/space/routines">
                   <Clock className="h-4 w-4 mr-2" />
                   View Routines
                 </Link>
               </Button>
               <Button asChild className="w-full justify-start" variant="outline">
-                <Link href="/progress">
+                <Link href="/space/progress">
                   <TrendingUp className="h-4 w-4 mr-2" />
                   Track Progress
                 </Link>

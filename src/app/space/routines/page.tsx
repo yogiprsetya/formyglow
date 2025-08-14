@@ -226,7 +226,7 @@ export default function RoutinesPage() {
               asChild
               className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
             >
-              <Link href="/routines/create">
+              <Link href="/space/routines/create">
                 <Plus className="h-4 w-4 mr-2" />
                 Create Routine
               </Link>
@@ -375,7 +375,7 @@ export default function RoutinesPage() {
                   : 'Start building your skincare routines'}
               </p>
               <Button asChild>
-                <Link href="/routines/create">
+                <Link href="/space/routines/create">
                   <Plus className="h-4 w-4 mr-2" />
                   Create Your First Routine
                 </Link>

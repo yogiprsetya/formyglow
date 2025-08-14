@@ -204,7 +204,7 @@ export default function ProgressPage() {
             </div>
             <div className="flex space-x-3">
               <Button asChild variant="outline">
-                <Link href="/progress/photo">
+                <Link href="/space/progress/photo">
                   <Camera className="h-4 w-4 mr-2" />
                   Add Photo
                 </Link>
@@ -213,7 +213,7 @@ export default function ProgressPage() {
                 asChild
                 className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
               >
-                <Link href="/progress/note">
+                <Link href="/space/progress/note">
                   <Plus className="h-4 w-4 mr-2" />
                   Add Note
                 </Link>
@@ -280,7 +280,7 @@ export default function ProgressPage() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Photos</h2>
             <Button asChild variant="outline" size="sm">
-              <Link href="/progress/photo">
+              <Link href="/space/progress/photo">
                 <Camera className="h-4 w-4 mr-2" />
                 Add New Photo
               </Link>
@@ -370,7 +370,7 @@ export default function ProgressPage() {
                   Start documenting your skincare journey with photos
                 </p>
                 <Button asChild>
-                  <Link href="/progress/photo">
+                  <Link href="/space/progress/photo">
                     <Camera className="h-4 w-4 mr-2" />
                     Take Your First Photo
                   </Link>
@@ -385,7 +385,7 @@ export default function ProgressPage() {
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Progress Notes</h2>
             <Button asChild variant="outline" size="sm">
-              <Link href="/progress/note">
+              <Link href="/space/progress/note">
                 <Plus className="h-4 w-4 mr-2" />
                 Add New Note
               </Link>
@@ -456,7 +456,7 @@ export default function ProgressPage() {
                   Start documenting your skincare journey with notes
                 </p>
                 <Button asChild>
-                  <Link href="/progress/note">
+                  <Link href="/space/progress/note">
                     <Plus className="h-4 w-4 mr-2" />
                     Write Your First Note
                   </Link>
