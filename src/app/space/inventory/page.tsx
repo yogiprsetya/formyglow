@@ -118,19 +118,21 @@ export default function InventoryPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-      <Header />
+      <Header className="max-md:hidden" />
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between">
+          <div className="flex md:items-center justify-between max-md:flex-col max-md:gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">My Inventory</h1>
+
               <p className="text-gray-600 dark:text-gray-300">
                 Manage your skincare products and track their usage
               </p>
             </div>
+
             <Button
               asChild
               className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
@@ -144,7 +146,7 @@ export default function InventoryPage() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-1 md:grid-cols-4 md:gap-6 gap-4 mb-8">
           <StatCard variant="info" title="Total Products" icon={Package} stat={mockInventory.length} />
 
           <StatCard

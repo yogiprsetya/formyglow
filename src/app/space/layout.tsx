@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { AppLayout } from '~/components/app-shell/app-layout';
 
 export const metadata: Metadata = {
   title: 'FormyGlow - Dashboard',
@@ -6,5 +7,5 @@ export const metadata: Metadata = {
 };
 
 export default function SpaceLayout({ children }: { children: React.ReactNode }) {
-  return <div className="min-h-screen">{children}</div>;
+  return <AppLayout>{children}</AppLayout>;
 }
