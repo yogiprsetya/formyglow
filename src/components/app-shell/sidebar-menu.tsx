@@ -41,10 +41,10 @@ export function SidebarMenu() {
       <SheetContent side="left" className="w-[280px] sm:w-[320px]">
         <SheetHeader className="pb-6 flex-row gap-2 space-y-0">
           <ProfilePicture />
-          <p className="font-semibold">Personal Space</p>
+          <span className="font-semibold leading-8 text-sm">Personal Space</span>
         </SheetHeader>
 
-        <div className="flex flex-col">
+        <div className="flex flex-col h-[calc(100%-32px)]">
           {/* Menu Items */}
           <nav className="flex-1 space-y-2">
             {menuItems.map((item) => {
@@ -68,7 +68,7 @@ export function SidebarMenu() {
           </nav>
 
           {/* Logout Button */}
-          <div className="mt-12">
+          <div className="mb-6">
             <Button
               variant="outline"
               onClick={handleLogout}

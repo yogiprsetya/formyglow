@@ -11,20 +11,20 @@ interface AppLayoutProps {
 
 export function AppLayout({ children }: AppLayoutProps) {
   return (
-    <div className="flex min-h-screen bg-background">
+    <div className="flex h-screen bg-background overflow-hidden">
       {/* Desktop Sidebar */}
       <Sidebar />
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col w-full">
+      <div className="flex-1 flex flex-col w-full min-w-0">
         {/* Mobile Header with Menu Button */}
-        <header className="md:hidden flex items-center justify-between p-4 border-b bg-background">
+        <header className="md:hidden flex items-center justify-between p-4 border-b bg-background flex-shrink-0">
           <Logo />
           <SidebarMenu />
         </header>
 
-        {/* Page Content */}
-        <main className="flex-1 p-4 md:p-6">{children}</main>
+        {/* Page Content - Scrollable */}
+        <main className="flex-1 p-4 md:p-6 overflow-y-auto">{children}</main>
       </div>
     </div>
   );

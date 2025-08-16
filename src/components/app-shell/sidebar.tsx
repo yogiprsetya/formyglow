@@ -17,14 +17,14 @@ export function Sidebar() {
   };
 
   return (
-    <div className="hidden md:flex flex-col w-64 bg-background border-r min-h-screen">
+    <div className="hidden md:flex flex-col w-64 bg-background border-r h-screen flex-shrink-0">
       {/* Header */}
-      <div className="p-6 border-b">
+      <div className="p-6 border-b flex-shrink-0">
         <Logo />
       </div>
 
       {/* Menu Items */}
-      <nav className="flex-1 p-4 space-y-2">
+      <nav className="flex-1 p-4 space-y-2 overflow-y-auto">
         {menuItems.map((item) => {
           const Icon = item.icon;
           return (
@@ -44,7 +44,7 @@ export function Sidebar() {
       </nav>
 
       {/* Logout Button */}
-      <div className="p-4 border-t">
+      <div className="p-4 border-t flex-shrink-0">
         <Button
           variant="outline"
           onClick={handleLogout}
