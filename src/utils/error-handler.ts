@@ -1,5 +1,5 @@
 import { type AxiosError } from 'axios';
-import { toast } from '~/hooks/useToast';
+import { toast } from 'sonner';
 
 type ResponseType = {
   success: false;
@@ -22,20 +22,16 @@ export const errorHandler = (err: AxiosError<ResponseType>) => {
         : data?.errors
       : data?.message;
 
-    toast({
-      title: 'Error occured',
+    toast.error('Error occured', {
       description: msg,
-      variant: 'destructive',
       duration: 5000
     });
 
     return err.response?.data ?? panicResponse;
   }
 
-  toast({
-    title: 'Error',
+  toast.error('Error', {
     description: 'Internal Server Error',
-    variant: 'destructive',
     duration: 5000
   });
 
