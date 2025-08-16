@@ -12,7 +12,7 @@ export default function HomePage() {
   const { data: session } = useSession();
 
   return (
-    <div className="space-y-8">
+    <main className="space-y-8 px-4 sm:px-6 lg:px-8 py-8">
       {/* Welcome Section */}
       <div>
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
@@ -182,6 +182,6 @@ export default function HomePage() {
           </Card>
         ))}
       </div>
-    </div>
+    </main>
   );
 }
