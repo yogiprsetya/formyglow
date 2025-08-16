@@ -14,6 +14,10 @@ const Header = dynamic(() => import('./space-header').then((m) => m.SpaceHeader)
   loading: () => <Skeleton className="w-full h-16 max-md:hidden" />
 });
 
+const Toaster = dynamic(() => import('~/components/ui/sonner').then((m) => m.Toaster), {
+  ssr: false
+});
+
 export const metadata: Metadata = {
   title: 'FormyGlow - Dashboard',
   description: 'Kelola skincare Anda dengan FormyGlow'
@@ -34,6 +38,8 @@ export default function SpaceLayout({ children }: { children: React.ReactNode })
         {!isMobile && pathname !== '/space' && <Header className="max-md:hiden" />}
         {children}
       </div>
+
+      <Toaster />
     </AppLayout>
   );
 }
