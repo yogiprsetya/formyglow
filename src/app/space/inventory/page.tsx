@@ -8,6 +8,9 @@ import { Input } from '~/components/ui/input';
 import { Plus, Search, Package, Calendar, AlertTriangle, Edit, Trash2, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { StatCard } from '~/components/common/stat-card';
+import { DeleteInventoryDialog } from '~/app/space/inventory/delete-inventory-dialog';
+import { ViewInventoryDialog } from '~/app/space/inventory/view-inventory-dialog';
+import { toast } from 'sonner';
 
 // Mock data untuk demo
 const mockInventory = [
@@ -70,6 +73,13 @@ export default function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showExpiring, setShowExpiring] = useState(false);
+  const [deleteDialog, setDeleteDialog] = useState<{
+    isOpen: boolean;
+    itemId: string;
+    itemName: string;
+  } | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [viewDialog, setViewDialog] = useState<{ isOpen: boolean; item: any } | null>(null);
 
   const filteredInventory = mockInventory.filter((item) => {
     const matchesSearch =
@@ -107,6 +117,29 @@ export default function InventoryPage() {
     const diffTime = expiryDate.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
     return diffDays;
+  };
+
+  const handleDeleteClick = (itemId: string, itemName: string) => {
+    setDeleteDialog({ isOpen: true, itemId, itemName });
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const handleViewClick = (item: any) => {
+    setViewDialog({ isOpen: true, item });
+  };
+
+  const handleDeleteSuccess = () => {
+    setDeleteDialog(null);
+    // TODO: Refresh inventory data
+    toast.success('Produk berhasil dihapus');
+  };
+
+  const handleDeleteCancel = () => {
+    setDeleteDialog(null);
+  };
+
+  const handleViewClose = () => {
+    setViewDialog(null);
   };
 
   return (
@@ -279,15 +312,27 @@ export default function InventoryPage() {
 
                 {/* Actions */}
                 <div className="flex space-x-2">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
+                  <Button variant="outline" size="sm" className="flex-1" asChild>
+                    <Link href={`/space/inventory/edit/${item.id}`}>
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Link>
                   </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="flex-1"
+                    onClick={() => handleViewClick(item)}
+                  >
                     <Eye className="h-4 w-4 mr-2" />
                     View
                   </Button>
-                  <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-red-600 hover:text-red-700"
+                    onClick={() => handleDeleteClick(item.id, item.product.name)}
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
@@ -317,6 +362,19 @@ export default function InventoryPage() {
           </CardContent>
         </Card>
       )}
+
+      {/* Delete Dialog */}
+      {deleteDialog?.isOpen && (
+        <DeleteInventoryDialog
+          itemId={deleteDialog.itemId}
+          itemName={deleteDialog.itemName}
+          onDelete={handleDeleteSuccess}
+          onCancel={handleDeleteCancel}
+        />
+      )}
+
+      {/* View Dialog */}
+      {viewDialog?.isOpen && <ViewInventoryDialog item={viewDialog.item} onClose={handleViewClose} />}
     </main>
   );
 }
