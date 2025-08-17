@@ -82,7 +82,6 @@ export default function AddProductPage() {
         </div>
       </div>
 
-      {/* Form */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -165,7 +164,7 @@ export default function AddProductPage() {
                       <FormLabel>Harga (dalam angka) *</FormLabel>
                       <FormControl>
                         <div className="relative">
-                          <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                          <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 size-4 text-gray-400" />
                           <Input
                             placeholder="1500"
                             className="pl-10"
@@ -321,7 +320,7 @@ export default function AddProductPage() {
               </div>
 
               {/* Form Actions */}
-              <div className="flex gap-4 pt-6 border-t">
+              <div className="flex gap-4 pt-6">
                 <Button type="button" variant="outline" asChild disabled={isSubmitting}>
                   <Link href="/space/inventory">Batal</Link>
                 </Button>

@@ -17,9 +17,9 @@ export function Sidebar() {
   };
 
   return (
-    <div className="hidden md:flex flex-col w-64 bg-background border-r h-screen flex-shrink-0">
+    <div className="hidden md:flex flex-col w-64 dark:bg-slate-800/10 h-screen flex-shrink-0">
       {/* Header */}
-      <div className="p-6 border-b flex-shrink-0">
+      <div className="p-6 flex-shrink-0">
         <Logo />
       </div>
 
@@ -44,7 +44,7 @@ export function Sidebar() {
       </nav>
 
       {/* Logout Button */}
-      <div className="p-4 border-t flex-shrink-0">
+      <div className="p-4 flex-shrink-0">
         <Button
           variant="outline"
           onClick={handleLogout}
