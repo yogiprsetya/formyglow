@@ -8,7 +8,14 @@ import { handleSuccessResponse } from '../handle-success-res';
 import { handleExpiredSession, handleInvalidRequest } from '../handle-error-res';
 import { bodyParse } from '../body-parse';
 
-const schema = createInsertSchema(inventory);
+const schema = createInsertSchema(inventory).omit({ userId: true });
+
+function sanitizeDate(input: string | null | undefined): string | undefined {
+  if (!input || input.trim() === '') {
+    return undefined; // Drizzle converts undefined to NULL
+  }
+  return input;
+}
 
 // GET /api/inventory - Get all inventory items for current user
 export async function GET(req: NextRequest) {
@@ -71,7 +78,16 @@ export async function POST(req: NextRequest) {
 
   return requireUserAuth(req, async (session) => {
     if (session) {
-      const result = await db.insert(inventory).values(data).returning();
+      const result = await db
+        .insert(inventory)
+        .values({
+          ...data,
+          purchaseDate: sanitizeDate(data.purchaseDate),
+          expiryDate: sanitizeDate(data.expiryDate),
+          openedDate: sanitizeDate(data.openedDate),
+          userId: session.user.id
+        })
+        .returning();
 
       return handleSuccessResponse(result[0]);
     }

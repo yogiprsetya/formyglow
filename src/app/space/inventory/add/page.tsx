@@ -1,6 +1,5 @@
 'use client';
 
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '~/components/ui/button';
@@ -18,8 +17,8 @@ import {
 import { ArrowLeft, Plus, Calendar, Package, DollarSign, Hash, FileText, Eye, EyeOff } from 'lucide-react';
 import Link from 'next/link';
 import { addProductFormSchema, type AddProductFormData } from '../schema';
-import { toast } from 'sonner';
 import { skincareTypesEnum } from '~/db/schema/inventory';
+import { useInventory } from '~/app/space/inventory/use-inventory';
 
 const categories = skincareTypesEnum.enumValues.map((value) => ({
   value,
@@ -30,15 +29,16 @@ const categories = skincareTypesEnum.enumValues.map((value) => ({
 }));
 
 export default function AddProductPage() {
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const { addProduct, isSubmitting } = useInventory();
 
   const form = useForm({
     resolver: zodResolver(addProductFormSchema),
+    mode: 'onBlur',
     defaultValues: {
       name: '',
       brand: '',
       skincareTypes: 'cleanser',
-      price: '',
+      price: 0,
       size: '',
       quantity: 0,
       purchaseDate: '',
@@ -50,31 +50,11 @@ export default function AddProductPage() {
   });
 
   const onSubmit = async (data: AddProductFormData) => {
-    try {
-      setIsSubmitting(true);
+    const { success } = await addProduct(data);
 
-      // Simulasi API call
-      console.log('Form data:', data);
-
-      // TODO: Implementasi API call ke database
-      // const response = await fetch('/api/inventory', {
-      //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(data)
-      // });
-
-      toast.success('Produk berhasil ditambahkan ke inventory!');
-
-      // Reset form
+    if (success) {
       form.reset();
-
-      // Redirect ke halaman inventory
       // router.push('/space/inventory');
-    } catch (error) {
-      console.error('Error adding product:', error);
-      toast.error('Gagal menambahkan produk. Silakan coba lagi.');
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
@@ -176,10 +156,15 @@ export default function AddProductPage() {
                       <FormControl>
                         <div className="relative">
                           <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <Input placeholder="1500" className="pl-10" {...field} />
+                          <Input
+                            placeholder="1500"
+                            className="pl-10"
+                            {...field}
+                            onChange={(e) => field.onChange(+e.target.value)}
+                          />
                         </div>
                       </FormControl>
-                      <FormDescription>Masukkan harga dalam cent (contoh: 1500 untuk $15.00)</FormDescription>
+                      <FormDescription>Masukkan harga dalam angka (contoh: 15 untuk $15.00)</FormDescription>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -208,7 +193,12 @@ export default function AddProductPage() {
                       <FormControl>
                         <div className="relative">
                           <Hash className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
-                          <Input placeholder="1" className="pl-10" {...field} />
+                          <Input
+                            placeholder="1"
+                            className="pl-10"
+                            {...field}
+                            onChange={(e) => field.onChange(+e.target.value)}
+                          />
                         </div>
                       </FormControl>
                       <FormMessage />
