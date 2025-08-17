@@ -1,17 +1,5 @@
-import { createInsertSchema } from 'drizzle-zod';
 import { z } from 'zod';
-import { inventory, skincareTypesEnum } from '~/db/schema/inventory';
-
-// Schema untuk insert inventory
-export const insertInventorySchema = createInsertSchema(inventory, {
-  purchaseDate: z.string().optional(),
-  expiryDate: z.string().optional(),
-  openedDate: z.string().optional(),
-  notes: z.string().optional()
-});
-
-// Schema untuk update inventory
-export const updateInventorySchema = insertInventorySchema.partial();
+import { skincareTypesEnum } from '~/db/schema/inventory';
 
 // Schema untuk form add product
 export const addProductFormSchema = z.object({
@@ -34,5 +22,3 @@ export const editProductFormSchema = addProductFormSchema.partial();
 // Type inference
 export type AddProductFormData = z.infer<typeof addProductFormSchema>;
 export type EditProductFormData = z.infer<typeof editProductFormSchema>;
-export type InsertInventoryData = z.infer<typeof insertInventorySchema>;
-export type UpdateInventoryData = z.infer<typeof updateInventorySchema>;
