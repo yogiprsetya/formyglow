@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { addProductFormSchema, type AddProductFormData } from '../schema';
 import { skincareTypesEnum } from '~/db/schema/inventory';
 import { useInventory } from '~/app/space/inventory/use-inventory';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
 
 const categories = skincareTypesEnum.enumValues.map((value) => ({
   value,
@@ -72,7 +73,9 @@ export default function AddProductPage() {
         </div>
 
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Tambah Produk Baru</h1>
+          <h1 className="md:text-3xl text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            Tambah Produk Baru
+          </h1>
           <p className="text-gray-600 dark:text-gray-300">
             Tambahkan produk skincare baru ke dalam inventory Anda
           </p>
@@ -83,9 +86,10 @@ export default function AddProductPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" />
+            <Package className="md:size-5 size-4" />
             Informasi Produk
           </CardTitle>
+
           <CardDescription>
             Isi informasi lengkap tentang produk skincare yang ingin ditambahkan
           </CardDescription>
@@ -129,18 +133,24 @@ export default function AddProductPage() {
                   name="skincareTypes"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Kategori *</FormLabel>
+                      <FormLabel>Category *</FormLabel>
+
                       <FormControl>
-                        <select
-                          {...field}
-                          className="w-full px-3 py-2 border border-gray-300 rounded-md bg-white dark:bg-slate-800 dark:border-slate-600 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
-                        >
-                          {categories.map((category) => (
-                            <option key={category.value} value={category.value}>
-                              {category.label}
-                            </option>
-                          ))}
-                        </select>
+                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                          <FormControl>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select category" />
+                            </SelectTrigger>
+                          </FormControl>
+
+                          <SelectContent>
+                            {categories.map((category) => (
+                              <SelectItem key={category.value} value={category.value}>
+                                {category.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -152,7 +162,7 @@ export default function AddProductPage() {
                   name="price"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Harga (dalam cent) *</FormLabel>
+                      <FormLabel>Harga (dalam angka) *</FormLabel>
                       <FormControl>
                         <div className="relative">
                           <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
