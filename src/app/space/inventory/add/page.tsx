@@ -30,7 +30,7 @@ const categories = skincareTypesEnum.enumValues.map((value) => ({
 }));
 
 export default function AddProductPage() {
-  const { addProduct, isSubmitting } = useInventory();
+  const { addProduct, isSubmitting } = useInventory({ disabled: true });
 
   const form = useForm({
     resolver: zodResolver(addProductFormSchema),
@@ -55,7 +55,6 @@ export default function AddProductPage() {
 
     if (success) {
       form.reset();
-      // router.push('/space/inventory');
     }
   };
 

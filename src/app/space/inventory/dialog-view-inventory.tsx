@@ -5,28 +5,14 @@ import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
 import { X, Package, Calendar, DollarSign, Hash, FileText, Eye } from 'lucide-react';
 import Link from 'next/link';
+import type { SelectInventory } from './schema';
 
-interface ViewInventoryDialogProps {
-  item: {
-    id: string;
-    product: {
-      name: string;
-      brand: string;
-      category: string;
-      price: number;
-      size: string;
-    };
-    quantity: number;
-    purchaseDate?: string;
-    expiryDate?: string;
-    openedDate?: string;
-    isOpen: boolean;
-    notes?: string;
-  };
+interface Props {
+  item: Partial<SelectInventory>;
   onClose: () => void;
 }
 
-export function ViewInventoryDialog({ item, onClose }: ViewInventoryDialogProps) {
+export const DialogViewInventory = ({ item, onClose }: Props) => {
   const formatPrice = (price: number) => {
     return `$${(price / 100).toFixed(2)}`;
   };
@@ -63,30 +49,25 @@ export function ViewInventoryDialog({ item, onClose }: ViewInventoryDialogProps)
         </CardHeader>
 
         <CardContent className="space-y-6">
-          {/* Product Image Placeholder */}
-          <div className="w-full h-48 bg-gray-100 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-            <Package className="h-16 w-16 text-gray-400" />
-          </div>
-
           {/* Basic Information */}
           <div className="space-y-4">
             <div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">
-                {item.product.name}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 text-lg">{item.product.brand}</p>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">{item.name}</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-lg">{item.brand}</p>
             </div>
 
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary" className="capitalize">
-                {item.product.category}
+                {item.skincareTypes}
               </Badge>
+
               {item.isOpen && (
                 <Badge variant="outline" className="text-green-600 border-green-600">
                   <Eye className="h-3 w-3 mr-1" />
                   Open
                 </Badge>
               )}
+
               {isExpiringSoon && (
                 <Badge variant="destructive">
                   <Calendar className="h-3 w-3 mr-1" />
@@ -102,13 +83,13 @@ export function ViewInventoryDialog({ item, onClose }: ViewInventoryDialogProps)
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-gray-400" />
                 <span className="text-gray-500 dark:text-gray-400">Harga:</span>
-                <span className="font-medium">{formatPrice(item.product.price)}</span>
+                <span className="font-medium">{formatPrice(item.price ?? 0)}</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <Package className="h-4 w-4 text-gray-400" />
                 <span className="text-gray-500 dark:text-gray-400">Ukuran:</span>
-                <span className="font-medium">{item.product.size}</span>
+                <span className="font-medium">{item.size}</span>
               </div>
 
               <div className="flex items-center gap-2">
@@ -175,4 +156,4 @@ export function ViewInventoryDialog({ item, onClose }: ViewInventoryDialogProps)
       </Card>
     </div>
   );
-}
+};

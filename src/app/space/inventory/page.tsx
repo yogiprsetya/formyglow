@@ -8,64 +8,24 @@ import { Input } from '~/components/ui/input';
 import { Plus, Search, Package, Calendar, AlertTriangle, Edit, Trash2, Eye } from 'lucide-react';
 import Link from 'next/link';
 import { StatCard } from '~/components/common/stat-card';
-import { DeleteInventoryDialog } from '~/app/space/inventory/delete-inventory-dialog';
-import { ViewInventoryDialog } from '~/app/space/inventory/view-inventory-dialog';
-import { toast } from 'sonner';
+import { useInventory } from './use-inventory';
+import { If } from '~/components/ui/if';
+import dynamic from 'next/dynamic';
+import { SelectInventory } from './schema';
 
-// Mock data untuk demo
-const mockInventory = [
+const DialogDeleteInventory = dynamic(
+  () => import('./dialog-delete-inventory').then((m) => m.DialogDeleteInventory),
   {
-    id: '1',
-    product: {
-      name: 'Gentle Daily Cleanser',
-      brand: 'CeraVe',
-      category: 'cleanser',
-      imageUrl: '/api/placeholder/100/100',
-      price: 1500,
-      size: '236ml'
-    },
-    quantity: 2,
-    purchaseDate: '2024-01-15',
-    expiryDate: '2026-01-15',
-    openedDate: '2024-01-20',
-    isOpen: true,
-    notes: 'Using daily, works great for sensitive skin'
-  },
-  {
-    id: '2',
-    product: {
-      name: 'Vitamin C Serum',
-      brand: 'The Ordinary',
-      category: 'serum',
-      imageUrl: '/api/placeholder/100/100',
-      price: 800,
-      size: '30ml'
-    },
-    quantity: 1,
-    purchaseDate: '2024-02-01',
-    expiryDate: '2025-02-01',
-    openedDate: '2024-02-05',
-    isOpen: true,
-    notes: 'Using in morning routine'
-  },
-  {
-    id: '3',
-    product: {
-      name: 'Daily Moisturizing Lotion',
-      brand: 'CeraVe',
-      category: 'moisturizer',
-      imageUrl: '/api/placeholder/100/100',
-      price: 1800,
-      size: '236ml'
-    },
-    quantity: 1,
-    purchaseDate: '2024-01-10',
-    expiryDate: '2026-01-10',
-    openedDate: '2024-01-15',
-    isOpen: true,
-    notes: 'Hydrating and non-greasy'
+    ssr: false
   }
-];
+);
+
+const DialogViewInventory = dynamic(
+  () => import('./dialog-view-inventory').then((m) => m.DialogViewInventory),
+  {
+    ssr: false
+  }
+);
 
 const categories = ['all', 'cleanser', 'serum', 'moisturizer', 'sunscreen', 'exfoliant', 'mask', 'oil'];
 
@@ -75,26 +35,17 @@ export default function InventoryPage() {
   const [showExpiring, setShowExpiring] = useState(false);
   const [deleteDialog, setDeleteDialog] = useState<{
     isOpen: boolean;
-    itemId: string;
-    itemName: string;
+    item: Pick<SelectInventory, 'id' | 'name'>;
   } | null>(null);
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [viewDialog, setViewDialog] = useState<{ isOpen: boolean; item: any } | null>(null);
+  const [viewDialog, setViewDialog] = useState<{
+    isOpen: boolean;
+    item: Partial<SelectInventory>;
+  } | null>(null);
 
-  const filteredInventory = mockInventory.filter((item) => {
-    const matchesSearch =
-      item.product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.product.brand.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || item.product.category === selectedCategory;
-    const matchesExpiring =
-      !showExpiring ||
-      (item.expiryDate && new Date(item.expiryDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000));
-
-    return matchesSearch && matchesCategory && matchesExpiring;
-  });
+  const { data, isLoading } = useInventory();
 
   const getExpiringItems = () => {
-    return mockInventory.filter(
+    return data?.data.filter(
       (item) => item.expiryDate && new Date(item.expiryDate) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
     );
   };
@@ -120,26 +71,17 @@ export default function InventoryPage() {
   };
 
   const handleDeleteClick = (itemId: string, itemName: string) => {
-    setDeleteDialog({ isOpen: true, itemId, itemName });
+    setDeleteDialog({
+      isOpen: true,
+      item: {
+        id: itemId,
+        name: itemName
+      }
+    });
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleViewClick = (item: any) => {
+  const handleViewClick = (item: { id: string; name: string }) => {
     setViewDialog({ isOpen: true, item });
-  };
-
-  const handleDeleteSuccess = () => {
-    setDeleteDialog(null);
-    // TODO: Refresh inventory data
-    toast.success('Produk berhasil dihapus');
-  };
-
-  const handleDeleteCancel = () => {
-    setDeleteDialog(null);
-  };
-
-  const handleViewClose = () => {
-    setViewDialog(null);
   };
 
   return (
@@ -169,27 +111,27 @@ export default function InventoryPage() {
 
       {/* Stats Cards */}
       <div className="grid grid-cols-1 md:grid-cols-4 md:gap-6 gap-4 mb-8">
-        <StatCard variant="info" title="Total Products" icon={Package} stat={mockInventory.length} />
+        <StatCard variant="info" title="Total Products" icon={Package} stat={data?.data.length ?? 0} />
 
         <StatCard
           variant="success"
           title="Open Products"
           icon={Eye}
-          stat={mockInventory.filter((item) => item.isOpen).length}
+          stat={data?.data.filter((item) => item.isOpen).length ?? 0}
         />
 
         <StatCard
           variant="warning"
           title="Expiring Soon"
           icon={AlertTriangle}
-          stat={getExpiringItems().length}
+          stat={getExpiringItems()?.length ?? 0}
         />
 
         <StatCard
           variant="purple"
           title="Categories"
           icon={Calendar}
-          stat={new Set(mockInventory.map((item) => item.product.category)).size}
+          stat={new Set(data?.data.map((item) => item.skincareTypes)).size}
         />
       </div>
 
@@ -237,122 +179,132 @@ export default function InventoryPage() {
 
       {/* Inventory Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredInventory.map((item) => {
-          const daysUntilExpiry = item.expiryDate ? getDaysUntilExpiry(item.expiryDate) : null;
-          const isExpiringSoon = daysUntilExpiry && daysUntilExpiry <= 30;
+        <If condition={!isLoading} fallback="Loading ...">
+          {data?.data.map((item) => {
+            const daysUntilExpiry = item.expiryDate ? getDaysUntilExpiry(item.expiryDate) : null;
+            const isExpiringSoon = daysUntilExpiry && daysUntilExpiry <= 30;
 
-          return (
-            <Card key={item.id} className="hover:shadow-lg transition-shadow duration-200">
-              <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
-                      {item.product.name}
-                    </CardTitle>
-                    <CardDescription className="text-gray-600 dark:text-gray-400">
-                      {item.product.brand}
-                    </CardDescription>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <Badge variant="secondary" className="capitalize">
-                      {item.product.category}
-                    </Badge>
-                    {item.isOpen && (
-                      <Badge variant="outline" className="text-green-600 border-green-600">
-                        Open
+            return (
+              <Card key={item.id} className="hover:shadow-lg transition-shadow duration-200">
+                <CardHeader className="pb-3">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <CardTitle className="text-lg font-semibold text-gray-900 dark:text-white">
+                        {item.name}
+                      </CardTitle>
+
+                      <CardDescription className="text-gray-600 dark:text-gray-400">
+                        {item.brand}
+                      </CardDescription>
+                    </div>
+
+                    <div className="flex items-center space-x-2">
+                      <Badge variant="secondary" className="capitalize">
+                        {item.skincareTypes}
                       </Badge>
+
+                      {item.isOpen && (
+                        <Badge variant="outline" className="text-green-600 border-green-600">
+                          Open
+                        </Badge>
+                      )}
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                  {/* Product Details */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500 dark:text-gray-400">Price:</span>
+                      <span className="font-medium">{formatPrice(item.price)}</span>
+                    </div>
+
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500 dark:text-gray-400">Size:</span>
+                      <span className="font-medium">{item.size}</span>
+                    </div>
+
+                    <div className="flex justify-between text-sm">
+                      <span className="text-gray-500 dark:text-gray-400">Quantity:</span>
+                      <span className="font-medium">{item.quantity}</span>
+                    </div>
+
+                    {item.purchaseDate && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 dark:text-gray-400">Purchased:</span>
+                        <span className="font-medium">{formatDate(item.purchaseDate)}</span>
+                      </div>
+                    )}
+
+                    {item.expiryDate && (
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-500 dark:text-gray-400">Expires:</span>
+                        <span className={`font-medium ${isExpiringSoon ? 'text-red-600' : ''}`}>
+                          {formatDate(item.expiryDate)}
+                          {isExpiringSoon && ` (${daysUntilExpiry} days)`}
+                        </span>
+                      </div>
                     )}
                   </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Product Image Placeholder */}
-                <div className="w-full h-32 bg-gray-100 dark:bg-slate-700 rounded-lg flex items-center justify-center">
-                  <Package className="h-12 w-12 text-gray-400" />
-                </div>
 
-                {/* Product Details */}
-                <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">Price:</span>
-                    <span className="font-medium">{formatPrice(item.product.price)}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">Size:</span>
-                    <span className="font-medium">{item.product.size}</span>
-                  </div>
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-500 dark:text-gray-400">Quantity:</span>
-                    <span className="font-medium">{item.quantity}</span>
-                  </div>
-                  {item.purchaseDate && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500 dark:text-gray-400">Purchased:</span>
-                      <span className="font-medium">{formatDate(item.purchaseDate)}</span>
+                  {/* Notes */}
+                  {item.notes && (
+                    <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-slate-800 p-3 rounded-lg">
+                      <p className="font-medium mb-1">Notes:</p>
+                      <p>{item.notes}</p>
                     </div>
                   )}
-                  {item.expiryDate && (
-                    <div className="flex justify-between text-sm">
-                      <span className="text-gray-500 dark:text-gray-400">Expires:</span>
-                      <span className={`font-medium ${isExpiringSoon ? 'text-red-600' : ''}`}>
-                        {formatDate(item.expiryDate)}
-                        {isExpiringSoon && ` (${daysUntilExpiry} days)`}
-                      </span>
-                    </div>
-                  )}
-                </div>
 
-                {/* Notes */}
-                {item.notes && (
-                  <div className="text-sm text-gray-600 dark:text-gray-400 bg-gray-50 dark:bg-slate-800 p-3 rounded-lg">
-                    <p className="font-medium mb-1">Notes:</p>
-                    <p>{item.notes}</p>
+                  {/* Actions */}
+                  <div className="flex space-x-2">
+                    <Button variant="outline" size="sm" className="flex-1" asChild>
+                      <Link href={`/space/inventory/edit/${item.id}`}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </Link>
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1"
+                      onClick={() => handleViewClick(item)}
+                    >
+                      <Eye className="h-4 w-4 mr-2" />
+                      View
+                    </Button>
+
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700"
+                      onClick={() => handleDeleteClick(item.id, item.name)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
-                )}
-
-                {/* Actions */}
-                <div className="flex space-x-2">
-                  <Button variant="outline" size="sm" className="flex-1" asChild>
-                    <Link href={`/space/inventory/edit/${item.id}`}>
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit
-                    </Link>
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                    onClick={() => handleViewClick(item)}
-                  >
-                    <Eye className="h-4 w-4 mr-2" />
-                    View
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-red-600 hover:text-red-700"
-                    onClick={() => handleDeleteClick(item.id, item.product.name)}
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </If>
       </div>
 
       {/* Empty State */}
-      {filteredInventory.length === 0 && (
+      {data?.data.length === 0 && (
         <Card className="text-center py-12">
           <CardContent>
             <Package className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+
             <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No products found</h3>
+
             <p className="text-gray-500 dark:text-gray-400 mb-4">
               {searchTerm || selectedCategory !== 'all' || showExpiring
                 ? 'Try adjusting your search or filters'
                 : 'Start building your skincare collection'}
             </p>
+
             <Button asChild>
               <Link href="/space/inventory/add">
                 <Plus className="h-4 w-4 mr-2" />
@@ -363,18 +315,13 @@ export default function InventoryPage() {
         </Card>
       )}
 
-      {/* Delete Dialog */}
       {deleteDialog?.isOpen && (
-        <DeleteInventoryDialog
-          itemId={deleteDialog.itemId}
-          itemName={deleteDialog.itemName}
-          onDelete={handleDeleteSuccess}
-          onCancel={handleDeleteCancel}
-        />
+        <DialogDeleteInventory item={deleteDialog.item} onCancel={() => setDeleteDialog(null)} />
       )}
 
-      {/* View Dialog */}
-      {viewDialog?.isOpen && <ViewInventoryDialog item={viewDialog.item} onClose={handleViewClose} />}
+      {viewDialog?.isOpen && (
+        <DialogViewInventory item={viewDialog.item} onClose={() => setViewDialog(null)} />
+      )}
     </main>
   );
 }

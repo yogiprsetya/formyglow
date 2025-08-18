@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
         query: queryFilter
       });
 
-      return handleSuccessResponse(inventoryItems[0], meta);
+      return handleSuccessResponse(inventoryItems, meta);
     }
 
     return handleExpiredSession();
