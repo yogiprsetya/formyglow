@@ -14,15 +14,31 @@ import {
   FormMessage,
   FormDescription
 } from '~/components/ui/form';
-import { ArrowLeft, Plus, Calendar, Package, DollarSign, Hash, FileText, Eye, EyeOff } from 'lucide-react';
+import {
+  ArrowLeft,
+  Save,
+  Calendar,
+  Package,
+  DollarSign,
+  Hash,
+  FileText,
+  Eye,
+  EyeOff,
+  Loader2
+} from 'lucide-react';
 import Link from 'next/link';
-import { addProductFormSchema, type AddProductFormData } from '../schema';
+import { addProductFormSchema, type AddProductFormData } from '../../schema';
 import { useInventory } from '~/app/space/inventory/use-inventory';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
-import { categories } from '../constant';
+import { useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { categories } from '../../constant';
 
-export default function AddProductPage() {
-  const { addProduct, isSubmitting } = useInventory({ disabled: true });
+export default function EditProductPage() {
+  const params = useParams();
+  const productId = params.id as string;
+  const { getProductById, updateProduct, isSubmitting, isLoading } = useInventory({ disabled: true });
+  const [isProductNotFound, setProductNotFound] = useState(false);
 
   const form = useForm({
     resolver: zodResolver(addProductFormSchema),
@@ -42,13 +58,66 @@ export default function AddProductPage() {
     }
   });
 
+  useEffect(() => {
+    const fetchProduct = async () => {
+      getProductById(productId)
+        .then((res) => {
+          if (res.success && res.data) {
+            form.reset({
+              name: res.data.name,
+              brand: res.data.brand,
+              skincareTypes: res.data.skincareTypes ?? 'cleanser',
+              price: res.data.price,
+              size: res.data.size,
+              quantity: res.data.quantity,
+              purchaseDate: res.data.purchaseDate ?? '',
+              expiryDate: res.data.expiryDate ?? '',
+              openedDate: res.data.openedDate ?? '',
+              isOpen: res.data.isOpen ?? false,
+              notes: res.data.notes ?? ''
+            });
+          }
+        })
+        .catch(() => setProductNotFound(true));
+    };
+
+    fetchProduct();
+  }, [productId, getProductById, form]);
+
   const onSubmit = async (data: AddProductFormData) => {
-    const { success } = await addProduct(data);
+    const { success } = await updateProduct(productId, data);
 
     if (success) {
-      form.reset();
+      // Redirect to inventory page after successful update
+      window.location.href = '/space/inventory';
     }
   };
+
+  if (isLoading) {
+    return (
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex items-center justify-center h-64">
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-6 w-6 animate-spin" />
+            <span>Memuat data produk...</span>
+          </div>
+        </div>
+      </main>
+    );
+  }
+
+  if (isProductNotFound) {
+    return (
+      <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Produk tidak ditemukan</h1>
+          <Button asChild>
+            <Link href="/space/inventory">Kembali ke Inventory</Link>
+          </Button>
+        </div>
+      </main>
+    );
+  }
 
   return (
     <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -64,11 +133,9 @@ export default function AddProductPage() {
         </div>
 
         <div>
-          <h1 className="md:text-3xl text-2xl font-bold text-gray-900 dark:text-white mb-2">
-            Tambah Produk Baru
-          </h1>
+          <h1 className="md:text-3xl text-2xl font-bold text-gray-900 dark:text-white mb-2">Edit Produk</h1>
           <p className="text-gray-600 dark:text-gray-300">
-            Tambahkan produk skincare baru ke dalam inventory Anda
+            Edit informasi produk skincare dalam inventory Anda
           </p>
         </div>
       </div>
@@ -77,12 +144,10 @@ export default function AddProductPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Package className="md:size-5 size-4" />
-            Informasi Produk
+            Edit Informasi Produk
           </CardTitle>
 
-          <CardDescription>
-            Isi informasi lengkap tentang produk skincare yang ingin ditambahkan
-          </CardDescription>
+          <CardDescription>Ubah informasi produk skincare yang ingin diedit</CardDescription>
         </CardHeader>
 
         <CardContent>
@@ -126,7 +191,7 @@ export default function AddProductPage() {
                       <FormLabel>Category *</FormLabel>
 
                       <FormControl>
-                        <Select onValueChange={field.onChange} defaultValue={field.value}>
+                        <Select onValueChange={field.onChange} value={field.value}>
                           <FormControl>
                             <SelectTrigger>
                               <SelectValue placeholder="Select category" />
@@ -328,8 +393,8 @@ export default function AddProductPage() {
                     </>
                   ) : (
                     <>
-                      <Plus className="h-4 w-4 mr-2" />
-                      Tambah Produk
+                      <Save className="h-4 w-4 mr-2" />
+                      Simpan Perubahan
                     </>
                   )}
                 </Button>

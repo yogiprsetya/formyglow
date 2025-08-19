@@ -13,6 +13,8 @@ type Options = {
 
 export const useInventory = (opt?: Options) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isFetching, setIsFetching] = useState(false);
+
   const [keyword, setSearchKeyword] = useState('');
   const [sort, setSort] = useState<'expiryDate' | 'createdAt' | 'purchaseDate'>('createdAt');
   const [page, setPage] = useState(1);
@@ -51,6 +53,43 @@ export const useInventory = (opt?: Options) => {
       .finally(() => setIsSubmitting(false));
   }, []);
 
+  const getProductById = useCallback(async (id: string) => {
+    setIsFetching(true);
+
+    return httpClient
+      .get<HttpResponse<SelectInventory>>(`inventory/${id}`)
+      .then((res) => res.data)
+      .catch(errorHandler)
+      .finally(() => setIsFetching(false));
+  }, []);
+
+  const updateProduct = useCallback(
+    async (id: string, data: AddProductFormData) => {
+      setIsSubmitting(true);
+
+      return httpClient
+        .put<HttpResponse<SelectInventory>>(`inventory/${id}`, data)
+        .then((res) => {
+          if (!res.data.success) {
+            toast.error(`Error! status: ${res.status}`);
+            return { success: false };
+          }
+
+          if (res.data.success) {
+            toast.success('Produk berhasil diperbarui!');
+            mutate();
+            return { success: true };
+          }
+
+          toast.error('Gagal memperbarui produk');
+          return { success: false };
+        })
+        .catch(errorHandler)
+        .finally(() => setIsSubmitting(false));
+    },
+    [mutate]
+  );
+
   const deleteProduct = useCallback(
     async (id: string) => {
       setIsSubmitting(true);
@@ -80,13 +119,15 @@ export const useInventory = (opt?: Options) => {
 
   return {
     addProduct,
+    getProductById,
+    updateProduct,
     deleteProduct,
     isSubmitting,
     setSearchKeyword: useDebouncedCallback((q: string) => setSearchKeyword(q), 500),
     setSort,
     setPage,
     data,
-    isLoading,
+    isLoading: isLoading || isFetching,
     mutate
   };
 };

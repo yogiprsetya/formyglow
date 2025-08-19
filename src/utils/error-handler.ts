@@ -7,12 +7,7 @@ type ResponseType = {
   errors: Record<string, string>[];
 };
 
-const panicResponse = {
-  success: false,
-  message: 'Internal Server Error'
-};
-
-export const errorHandler = (err: AxiosError<ResponseType>) => {
+export const errorHandler = (err: AxiosError<ResponseType>): AxiosError & { success: false } => {
   const data = err.response?.data;
 
   if (data?.message != undefined) {
@@ -26,8 +21,6 @@ export const errorHandler = (err: AxiosError<ResponseType>) => {
       description: msg,
       duration: 5000
     });
-
-    return err.response?.data ?? panicResponse;
   }
 
   toast.error('Error', {
@@ -35,5 +28,5 @@ export const errorHandler = (err: AxiosError<ResponseType>) => {
     duration: 5000
   });
 
-  return panicResponse;
+  return { ...err, success: false };
 };
