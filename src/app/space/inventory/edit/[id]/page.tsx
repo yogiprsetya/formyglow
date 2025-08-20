@@ -28,17 +28,21 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { addProductFormSchema, type AddProductFormData } from '../../schema';
-import { useInventory } from '~/app/space/inventory/use-inventory';
+import { useInventory } from '../../use-inventory';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
-import { useEffect, useState } from 'react';
-import { useParams } from 'next/navigation';
+import { useEffect } from 'react';
+import { useParams, useRouter } from 'next/navigation';
+import { useProduct } from '../../use-product';
 import { categories } from '../../constant';
 
 export default function EditProductPage() {
   const params = useParams();
+  const router = useRouter();
+
   const productId = params.id as string;
-  const { getProductById, updateProduct, isSubmitting, isLoading } = useInventory({ disabled: true });
-  const [isProductNotFound, setProductNotFound] = useState(false);
+
+  const { updateProduct, isSubmitting } = useInventory({ disabled: true });
+  const { product, isLoading, error } = useProduct(productId);
 
   const form = useForm({
     resolver: zodResolver(addProductFormSchema),
@@ -59,37 +63,28 @@ export default function EditProductPage() {
   });
 
   useEffect(() => {
-    const fetchProduct = async () => {
-      getProductById(productId)
-        .then((res) => {
-          if (res.success && res.data) {
-            form.reset({
-              name: res.data.name,
-              brand: res.data.brand,
-              skincareTypes: res.data.skincareTypes ?? 'cleanser',
-              price: res.data.price,
-              size: res.data.size,
-              quantity: res.data.quantity,
-              purchaseDate: res.data.purchaseDate ?? '',
-              expiryDate: res.data.expiryDate ?? '',
-              openedDate: res.data.openedDate ?? '',
-              isOpen: res.data.isOpen ?? false,
-              notes: res.data.notes ?? ''
-            });
-          }
-        })
-        .catch(() => setProductNotFound(true));
-    };
-
-    fetchProduct();
-  }, [productId, getProductById, form]);
+    if (product) {
+      form.reset({
+        name: product.name,
+        brand: product.brand,
+        skincareTypes: product.skincareTypes || 'cleanser',
+        price: product.price,
+        size: product.size,
+        quantity: product.quantity,
+        purchaseDate: product.purchaseDate || '',
+        expiryDate: product.expiryDate || '',
+        openedDate: product.openedDate || '',
+        isOpen: product.isOpen || false,
+        notes: product.notes || ''
+      });
+    }
+  }, [product, form]);
 
   const onSubmit = async (data: AddProductFormData) => {
     const { success } = await updateProduct(productId, data);
 
     if (success) {
-      // Redirect to inventory page after successful update
-      window.location.href = '/space/inventory';
+      router.push('/space/inventory');
     }
   };
 
@@ -106,7 +101,7 @@ export default function EditProductPage() {
     );
   }
 
-  if (isProductNotFound) {
+  if (error || !product) {
     return (
       <main className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="text-center">

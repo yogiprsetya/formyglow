@@ -13,7 +13,6 @@ type Options = {
 
 export const useInventory = (opt?: Options) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isFetching, setIsFetching] = useState(false);
 
   const [keyword, setSearchKeyword] = useState('');
   const [sort, setSort] = useState<'expiryDate' | 'createdAt' | 'purchaseDate'>('createdAt');
@@ -51,16 +50,6 @@ export const useInventory = (opt?: Options) => {
       })
       .catch(errorHandler)
       .finally(() => setIsSubmitting(false));
-  }, []);
-
-  const getProductById = useCallback(async (id: string) => {
-    setIsFetching(true);
-
-    return httpClient
-      .get<HttpResponse<SelectInventory>>(`inventory/${id}`)
-      .then((res) => res.data)
-      .catch(errorHandler)
-      .finally(() => setIsFetching(false));
   }, []);
 
   const updateProduct = useCallback(
@@ -119,7 +108,6 @@ export const useInventory = (opt?: Options) => {
 
   return {
     addProduct,
-    getProductById,
     updateProduct,
     deleteProduct,
     isSubmitting,
@@ -127,7 +115,7 @@ export const useInventory = (opt?: Options) => {
     setSort,
     setPage,
     data,
-    isLoading: isLoading || isFetching,
+    isLoading,
     mutate
   };
 };
