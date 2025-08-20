@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { skincareTypesEnum, inventory } from '~/db/schema/inventory';
-import { type InferSelectModel } from 'drizzle-orm';
+import type { InferSelectModel } from 'drizzle-orm';
 
 // Schema untuk form add product
 export const addProductFormSchema = z.object({

@@ -1,6 +1,6 @@
 import { skincareTypesEnum } from '~/db/schema/inventory';
 
-export const categories = skincareTypesEnum.enumValues.map((value) => ({
+export const categoriesOptions = skincareTypesEnum.enumValues.map((value) => ({
   value,
   label: value
     .split('-')

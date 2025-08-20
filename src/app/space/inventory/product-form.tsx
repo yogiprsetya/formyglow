@@ -17,7 +17,7 @@ import {
 import { Calendar, Package, DollarSign, Hash, FileText, Eye, EyeOff, Loader2 } from 'lucide-react';
 import { addProductFormSchema, type AddProductFormData } from './schema';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~/components/ui/select';
-import { categories } from './constant';
+import { categoriesOptions } from './constant';
 import { ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
@@ -134,7 +134,7 @@ export function ProductForm({
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          {categories.map((category) => (
+                          {categoriesOptions.map((category) => (
                             <SelectItem key={category.value} value={category.value}>
                               {category.label}
                             </SelectItem>

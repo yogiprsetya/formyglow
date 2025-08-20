@@ -1,6 +1,20 @@
-import { text, timestamp, pgTable, boolean, integer } from 'drizzle-orm/pg-core';
+import { text, timestamp, pgTable, boolean, integer, pgEnum } from 'drizzle-orm/pg-core';
 import { users } from './users';
 import { inventory } from './inventory';
+
+export const routineTypeEnum = pgEnum('routine_type', ['morning', 'evening', 'custom']);
+
+export const routineFrequencyEnum = pgEnum('routine_frequency', ['daily', 'weekly']);
+
+export const dayOfWeekEnum = pgEnum('day_of_week', [
+  'monday',
+  'tuesday',
+  'wednesday',
+  'thursday',
+  'friday',
+  'saturday',
+  'sunday'
+]);
 
 export const routines = pgTable('routine', {
   id: text('id')
@@ -10,7 +24,7 @@ export const routines = pgTable('routine', {
     .notNull()
     .references(() => users.id, { onDelete: 'cascade' }),
   name: text('name').notNull(),
-  type: text('type').notNull(), // morning, evening, custom
+  type: routineTypeEnum('type').default('evening').notNull(),
   description: text('description'),
   isActive: boolean('is_active').default(true),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow(),
@@ -27,8 +41,9 @@ export const routineItems = pgTable('routine_item', {
   inventoryId: text('inventory_id')
     .notNull()
     .references(() => inventory.id, { onDelete: 'cascade' }),
-  order: integer('order').notNull(), // urutan penggunaan
-  frequency: text('frequency').default('daily'), // daily, alternate, weekly
+  order: integer('order').notNull(),
+  frequency: routineFrequencyEnum('frequency').default('daily'),
+  repeatOn: dayOfWeekEnum('repeat_on').array(), // array untuk mendukung multiple hari dalam seminggu
   notes: text('notes'),
   createdAt: timestamp('created_at', { mode: 'date' }).defaultNow()
 });
