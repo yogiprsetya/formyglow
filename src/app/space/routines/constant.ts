@@ -1,10 +1,10 @@
-import { routineTypeEnum, routineFrequencyEnum, dayOfWeekEnum } from '~/db/schema/routines';
+import { dayOfWeekEnum, routineFrequencyEnum, routineTypeEnum } from '~/db/schema/routines';
 
-export const routineTypeOptions = routineTypeEnum.enumValues.map((value) => ({
+export const dayOfWeekOptions = dayOfWeekEnum.enumValues.map((value) => ({
   value,
   label: value
     .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ')
 }));
 
@@ -12,14 +12,14 @@ export const routineFrequencyOptions = routineFrequencyEnum.enumValues.map((valu
   value,
   label: value
     .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ')
 }));
 
-export const dayOfWeekOptions = dayOfWeekEnum.enumValues.map((value) => ({
+export const routineTypeOptions = routineTypeEnum.enumValues.map((value) => ({
   value,
   label: value
     .split('-')
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
     .join(' ')
 }));

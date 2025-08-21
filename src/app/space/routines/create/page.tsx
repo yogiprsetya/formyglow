@@ -1,6 +1,8 @@
 'use client';
 
 import { useState } from 'react';
+import { useForm, useFieldArray, Controller } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Input } from '~/components/ui/input';
@@ -11,63 +13,50 @@ import { Badge } from '~/components/ui/badge';
 import { Trash2, ArrowLeft, Save, X, Search, Package } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { dayOfWeekOptions, routineFrequencyOptions, routineTypeOptions } from '../constant';
 import { useInventory } from '~/app/space/inventory/use-inventory';
+import { createRoutineFormSchema, type CreateRoutineFormData } from '../schema';
 import type { SelectInventory } from '~/app/space/inventory/schema';
 import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group';
-
-interface RoutineItem {
-  id: string;
-  product: {
-    id: string;
-    name: string;
-    brand: string;
-    category: string;
-  };
-  order: number;
-  frequency: string;
-  notes: string;
-  repeatedOn?: string[];
-}
-
-interface RoutineFormData {
-  name: string;
-  type: string;
-  description: string;
-  isActive: boolean;
-  items: RoutineItem[];
-}
+import { dayOfWeekOptions, routineFrequencyOptions, routineTypeOptions } from '../constant';
 
 export default function AddRoutinePage() {
   const router = useRouter();
   const { data: inventoryData, isLoading: isInventoryLoading } = useInventory();
 
-  const [formData, setFormData] = useState<RoutineFormData>({
-    name: '',
-    type: 'morning',
-    description: '',
-    isActive: true,
-    items: []
-  });
-
+  const [showProductPicker, setShowProductPicker] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [newItem, setNewItem] = useState({
-    frequency: 'daily',
+    frequency: 'daily' as 'daily' | 'weekly',
     notes: '',
     repeatedOn: [] as string[]
   });
 
-  const [showProductPicker, setShowProductPicker] = useState(false);
-  const [searchTerm, setSearchTerm] = useState('');
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+    setValue,
+    watch
+  } = useForm<CreateRoutineFormData>({
+    resolver: zodResolver(createRoutineFormSchema),
+    defaultValues: {
+      name: '',
+      type: 'evening',
+      description: '',
+      isActive: true,
+      items: []
+    }
+  });
 
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setFormData((prev) => ({
-      ...prev,
-      [field]: value
-    }));
-  };
+  const { fields, append, remove, move } = useFieldArray({
+    control,
+    name: 'items'
+  });
+
+  const watchedItems = watch('items');
 
   const addItem = (product: SelectInventory) => {
-    const item: RoutineItem = {
+    const item = {
       id: Date.now().toString(),
       product: {
         id: product.id,
@@ -75,16 +64,13 @@ export default function AddRoutinePage() {
         brand: product.brand,
         category: product.skincareTypes || 'cleanser'
       },
-      order: formData.items.length + 1,
+      order: watchedItems.length + 1,
       frequency: newItem.frequency,
       notes: newItem.notes,
       repeatedOn: newItem.frequency === 'weekly' ? newItem.repeatedOn : undefined
     };
 
-    setFormData((prev) => ({
-      ...prev,
-      items: [...prev.items, item]
-    }));
+    append(item);
 
     // Reset new item form
     setNewItem({
@@ -96,46 +82,32 @@ export default function AddRoutinePage() {
     setShowProductPicker(false);
   };
 
-  const removeItem = (itemId: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      items: prev.items
-        .filter((item) => item.id !== itemId)
-        .map((item, index) => ({ ...item, order: index + 1 }))
-    }));
-  };
-
-  const moveItem = (itemId: string, direction: 'up' | 'down') => {
-    setFormData((prev) => {
-      const items = [...prev.items];
-      const currentIndex = items.findIndex((item) => item.id === itemId);
-
-      if (direction === 'up' && currentIndex > 0) {
-        [items[currentIndex], items[currentIndex - 1]] = [items[currentIndex - 1], items[currentIndex]];
-      } else if (direction === 'down' && currentIndex < items.length - 1) {
-        [items[currentIndex], items[currentIndex + 1]] = [items[currentIndex + 1], items[currentIndex]];
-      }
-
-      // Update order numbers
-      items.forEach((item, index) => {
-        item.order = index + 1;
-      });
-
-      return { ...prev, items };
+  const removeItem = (index: number) => {
+    remove(index);
+    // Update order numbers
+    const updatedItems = watchedItems.filter((_, i) => i !== index);
+    updatedItems.forEach((item, i) => {
+      setValue(`items.${i}.order`, i + 1);
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!formData.name.trim() || formData.items.length === 0) {
-      alert('Please fill in routine name and add at least one product');
-      return;
+  const moveItem = (index: number, direction: 'up' | 'down') => {
+    if (direction === 'up' && index > 0) {
+      move(index, index - 1);
+    } else if (direction === 'down' && index < watchedItems.length - 1) {
+      move(index, index + 1);
     }
 
+    // Update order numbers
+    watchedItems.forEach((_, i) => {
+      setValue(`items.${i}.order`, i + 1);
+    });
+  };
+
+  const onSubmit = async (data: CreateRoutineFormData) => {
     try {
+      console.log('Saving routine:', data);
       // Here you would typically send the data to your API
-      console.log('Saving routine:', formData);
 
       // For now, just redirect back to routines page
       router.push('/space/routines');
@@ -175,7 +147,7 @@ export default function AddRoutinePage() {
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
         {/* Basic Information */}
         <Card>
           <CardHeader>
@@ -186,50 +158,73 @@ export default function AddRoutinePage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <Label htmlFor="name">Routine Name *</Label>
-                <Input
-                  id="name"
-                  placeholder="e.g., Morning Glow, Evening Recovery"
-                  value={formData.name}
-                  onChange={(e) => handleInputChange('name', e.target.value)}
-                  required
+                <Controller
+                  name="name"
+                  control={control}
+                  render={({ field }) => (
+                    <Input
+                      {...field}
+                      id="name"
+                      placeholder="e.g., Morning Glow, Evening Recovery"
+                      className={errors.name ? 'border-red-500' : ''}
+                    />
+                  )}
                 />
+                {errors.name && <p className="text-sm text-red-500">{errors.name.message}</p>}
               </div>
 
               <div className="space-y-2">
                 <Label htmlFor="type">Routine Type</Label>
-                <Select value={formData.type} onValueChange={(value) => handleInputChange('type', value)}>
-                  <SelectTrigger>
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {routineTypeOptions.map((type) => (
-                      <SelectItem key={type.value} value={type.value}>
-                        {type.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                <Controller
+                  name="type"
+                  control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger>
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {routineTypeOptions.map((type) => (
+                          <SelectItem key={type.value} value={type.value}>
+                            {type.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
               </div>
             </div>
 
             <div className="space-y-2">
               <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                placeholder="Describe your routine and its benefits..."
-                value={formData.description}
-                onChange={(e) => handleInputChange('description', e.target.value)}
-                rows={3}
+              <Controller
+                name="description"
+                control={control}
+                render={({ field }) => (
+                  <Textarea
+                    {...field}
+                    id="description"
+                    placeholder="Describe your routine and its benefits..."
+                    rows={3}
+                  />
+                )}
               />
             </div>
 
             <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="isActive"
-                checked={formData.isActive}
-                onChange={(e) => handleInputChange('isActive', e.target.checked)}
-                className="rounded border-gray-300"
+              <Controller
+                name="isActive"
+                control={control}
+                render={({ field }) => (
+                  <input
+                    type="checkbox"
+                    id="isActive"
+                    checked={field.value}
+                    onChange={field.onChange}
+                    className="rounded border-gray-300"
+                  />
+                )}
               />
               <Label htmlFor="isActive">Set as active routine</Label>
             </div>
@@ -264,10 +259,9 @@ export default function AddRoutinePage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="frequency">Frequency</Label>
-
                   <Select
                     value={newItem.frequency}
-                    onValueChange={(value) =>
+                    onValueChange={(value: 'daily' | 'weekly') =>
                       setNewItem((prev) => ({
                         ...prev,
                         frequency: value
@@ -277,7 +271,6 @@ export default function AddRoutinePage() {
                     <SelectTrigger>
                       <SelectValue />
                     </SelectTrigger>
-
                     <SelectContent>
                       {routineFrequencyOptions.map((freq) => (
                         <SelectItem key={freq.value} value={freq.value}>
@@ -304,11 +297,10 @@ export default function AddRoutinePage() {
               {newItem.frequency === 'weekly' && (
                 <div className="space-y-2">
                   <Label htmlFor="repeatedOn">Repeated On</Label>
-
                   <ToggleGroup
                     type="multiple"
-                    // onValueChange={field.onChange}
-                    // value={field.value}
+                    value={newItem.repeatedOn}
+                    onValueChange={(value) => setNewItem((prev) => ({ ...prev, repeatedOn: value }))}
                     className="justify-start"
                     variant="outline"
                     size="lg"
@@ -324,32 +316,34 @@ export default function AddRoutinePage() {
             </div>
 
             {/* Products List */}
-            {formData.items.length > 0 && (
+            {fields.length > 0 && (
               <div className="space-y-3">
                 <h4 className="font-medium text-gray-900 dark:text-white">Routine Steps</h4>
-                {formData.items.map((item, index) => (
+                {fields.map((field, index) => (
                   <div
-                    key={item.id}
+                    key={field.id}
                     className="flex items-center space-x-3 p-4 bg-gray-50 dark:bg-slate-800 rounded-lg border border-gray-200 dark:border-slate-700"
                   >
                     <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
                       <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
-                        {item.order}
+                        {field.order}
                       </span>
                     </div>
 
                     <div className="flex-1">
-                      <p className="text-sm font-medium text-gray-900 dark:text-white">{item.product.name}</p>
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {item.product.brand} • {item.product.category}
+                      <p className="text-sm font-medium text-gray-900 dark:text-white">
+                        {field.product.name}
                       </p>
-                      {item.notes && (
-                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{item.notes}</p>
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        {field.product.brand} • {field.product.category}
+                      </p>
+                      {field.notes && (
+                        <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{field.notes}</p>
                       )}
-                      {item.frequency === 'weekly' && item.repeatedOn && item.repeatedOn.length > 0 && (
+                      {field.frequency === 'weekly' && field.repeatedOn && field.repeatedOn.length > 0 && (
                         <div className="mt-1">
                           <p className="text-xs text-gray-600 dark:text-gray-400">
-                            Repeated on: {item.repeatedOn.join(', ')}
+                            Repeated on: {field.repeatedOn.join(', ')}
                           </p>
                         </div>
                       )}
@@ -357,7 +351,7 @@ export default function AddRoutinePage() {
 
                     <div className="flex items-center space-x-2">
                       <Badge variant="outline" className="text-xs">
-                        {item.frequency}
+                        {field.frequency}
                       </Badge>
 
                       <div className="flex space-x-1">
@@ -365,7 +359,7 @@ export default function AddRoutinePage() {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={() => moveItem(item.id, 'up')}
+                          onClick={() => moveItem(index, 'up')}
                           disabled={index === 0}
                           className="h-8 w-8 p-0"
                         >
@@ -376,8 +370,8 @@ export default function AddRoutinePage() {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={() => moveItem(item.id, 'down')}
-                          disabled={index === formData.items.length - 1}
+                          onClick={() => moveItem(index, 'down')}
+                          disabled={index === fields.length - 1}
                           className="h-8 w-8 p-0"
                         >
                           ↓
@@ -387,7 +381,7 @@ export default function AddRoutinePage() {
                           type="button"
                           variant="ghost"
                           size="sm"
-                          onClick={() => removeItem(item.id)}
+                          onClick={() => removeItem(index)}
                           className="h-8 w-8 p-0 text-red-600 hover:text-red-700"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -398,6 +392,8 @@ export default function AddRoutinePage() {
                 ))}
               </div>
             )}
+
+            {errors.items && <p className="text-sm text-red-500">{errors.items.message}</p>}
           </CardContent>
         </Card>
 
@@ -409,11 +405,11 @@ export default function AddRoutinePage() {
 
           <Button
             type="submit"
-            disabled={!formData.name.trim() || formData.items.length === 0}
+            disabled={isSubmitting || fields.length === 0}
             className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
           >
             <Save className="h-4 w-4 mr-2" />
-            Create Routine
+            {isSubmitting ? 'Creating...' : 'Create Routine'}
           </Button>
         </div>
       </form>
