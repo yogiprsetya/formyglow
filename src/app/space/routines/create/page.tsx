@@ -12,23 +12,23 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '~
 import { Badge } from '~/components/ui/badge';
 import { Trash2, ArrowLeft, Save, X, Search, Package } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { useInventory } from '~/app/space/inventory/use-inventory';
-import { createRoutineFormSchema, type CreateRoutineFormData } from '../schema';
+import { createRoutineFormSchema, CreateRoutineItem, type CreateRoutineFormData } from '../schema';
 import type { SelectInventory } from '~/app/space/inventory/schema';
 import { ToggleGroup, ToggleGroupItem } from '~/components/ui/toggle-group';
 import { dayOfWeekOptions, routineFrequencyOptions, routineTypeOptions } from '../constant';
+import { useRoutines } from '../use-routines';
 
 export default function AddRoutinePage() {
-  const router = useRouter();
   const { data: inventoryData, isLoading: isInventoryLoading } = useInventory();
+  const { createRoutine, isLoading: isCreating } = useRoutines();
 
   const [showProductPicker, setShowProductPicker] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [newItem, setNewItem] = useState({
     frequency: 'daily' as 'daily' | 'weekly',
     notes: '',
-    repeatedOn: [] as string[]
+    repeatedOn: [] as CreateRoutineItem['repeatedOn']
   });
 
   const {
@@ -106,13 +106,10 @@ export default function AddRoutinePage() {
 
   const onSubmit = async (data: CreateRoutineFormData) => {
     try {
-      console.log('Saving routine:', data);
-      // Here you would typically send the data to your API
-
-      // For now, just redirect back to routines page
-      router.push('/space/routines');
+      await createRoutine(data);
     } catch (error) {
       console.error('Error saving routine:', error);
+      // Error handling is already done in the hook
     }
   };
 
@@ -300,7 +297,12 @@ export default function AddRoutinePage() {
                   <ToggleGroup
                     type="multiple"
                     value={newItem.repeatedOn}
-                    onValueChange={(value) => setNewItem((prev) => ({ ...prev, repeatedOn: value }))}
+                    onValueChange={(value) =>
+                      setNewItem((prev) => ({
+                        ...prev,
+                        repeatedOn: value as CreateRoutineItem['repeatedOn']
+                      }))
+                    }
                     className="justify-start"
                     variant="outline"
                     size="lg"
@@ -405,11 +407,11 @@ export default function AddRoutinePage() {
 
           <Button
             type="submit"
-            disabled={isSubmitting || fields.length === 0}
+            disabled={isSubmitting || isCreating || fields.length === 0}
             className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700"
           >
             <Save className="h-4 w-4 mr-2" />
-            {isSubmitting ? 'Creating...' : 'Create Routine'}
+            {isSubmitting || isCreating ? 'Creating...' : 'Create Routine'}
           </Button>
         </div>
       </form>

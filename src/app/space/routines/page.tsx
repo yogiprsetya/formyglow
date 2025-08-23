@@ -8,136 +8,7 @@ import { Input } from '~/components/ui/input';
 import { Plus, Clock, Sun, Moon, Star, Edit, Trash2, Play } from 'lucide-react';
 import Link from 'next/link';
 import { StatCard } from '~/components/common/stat-card';
-
-// Mock data untuk demo
-const mockRoutines = [
-  {
-    id: '1',
-    name: 'Morning Glow',
-    type: 'morning',
-    description: 'Start your day with a fresh, glowing complexion',
-    isActive: true,
-    items: [
-      {
-        id: '1',
-        product: {
-          name: 'Gentle Daily Cleanser',
-          brand: 'CeraVe',
-          category: 'cleanser'
-        },
-        order: 1,
-        frequency: 'daily',
-        notes: 'Gentle cleansing to remove overnight buildup'
-      },
-      {
-        id: '2',
-        product: {
-          name: 'Vitamin C Serum',
-          brand: 'The Ordinary',
-          category: 'serum'
-        },
-        order: 2,
-        frequency: 'daily',
-        notes: 'Brightening and antioxidant protection'
-      },
-      {
-        id: '3',
-        product: {
-          name: 'Daily Moisturizing Lotion',
-          brand: 'CeraVe',
-          category: 'moisturizer'
-        },
-        order: 3,
-        frequency: 'daily',
-        notes: 'Hydration and barrier protection'
-      },
-      {
-        id: '4',
-        product: {
-          name: 'Supergoop Play',
-          brand: 'Supergoop',
-          category: 'sunscreen'
-        },
-        order: 4,
-        frequency: 'daily',
-        notes: 'SPF 50 protection'
-      }
-    ]
-  },
-  {
-    id: '2',
-    name: 'Evening Recovery',
-    type: 'evening',
-    description: 'Nighttime repair and recovery routine',
-    isActive: true,
-    items: [
-      {
-        id: '5',
-        product: {
-          name: 'Hydrating Facial Cleanser',
-          brand: 'CeraVe',
-          category: 'cleanser'
-        },
-        order: 1,
-        frequency: 'daily',
-        notes: 'Remove makeup and daily grime'
-      },
-      {
-        id: '6',
-        product: {
-          name: 'Resurfacing Retinol Serum',
-          brand: 'CeraVe',
-          category: 'serum'
-        },
-        order: 2,
-        frequency: 'alternate',
-        notes: 'Anti-aging and cell turnover'
-      },
-      {
-        id: '7',
-        product: {
-          name: 'PM Facial Moisturizing Lotion',
-          brand: 'CeraVe',
-          category: 'moisturizer'
-        },
-        order: 3,
-        frequency: 'daily',
-        notes: 'Rich night moisturizer'
-      }
-    ]
-  },
-  {
-    id: '3',
-    name: 'Weekly Reset',
-    type: 'custom',
-    description: 'Weekly deep treatment and exfoliation',
-    isActive: false,
-    items: [
-      {
-        id: '8',
-        product: {
-          name: 'AHA 30% + BHA 2% Peeling Solution',
-          brand: 'The Ordinary',
-          category: 'exfoliant'
-        },
-        order: 1,
-        frequency: 'weekly',
-        notes: 'Chemical exfoliation - use on Sunday evenings'
-      },
-      {
-        id: '9',
-        product: {
-          name: 'Cicapair Tiger Grass Cream',
-          brand: 'Dr. Jart+',
-          category: 'moisturizer'
-        },
-        order: 2,
-        frequency: 'weekly',
-        notes: 'Soothing and recovery'
-      }
-    ]
-  }
-];
+import { useRoutines } from './use-routines';
 
 const routineTypes = [
   { value: 'morning', label: 'Morning', icon: Sun, color: 'text-amber-600' },
@@ -150,24 +21,27 @@ export default function RoutinesPage() {
   const [selectedType, setSelectedType] = useState('all');
   const [showActiveOnly, setShowActiveOnly] = useState(false);
 
-  const filteredRoutines = mockRoutines.filter((routine) => {
-    const matchesSearch =
-      routine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      routine.description.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesType = selectedType === 'all' || routine.type === selectedType;
-    const matchesActive = !showActiveOnly || routine.isActive;
+  const { routines, isLoading } = useRoutines();
 
-    return matchesSearch && matchesType && matchesActive;
-  });
+  // const filteredRoutines = routines.filter((routine) => {
+  //   const matchesSearch =
+  //     routine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+  //     (routine.description && routine.description.toLowerCase().includes(searchTerm.toLowerCase()));
+  //   const matchesType = selectedType === 'all' || routine.type === selectedType;
+  //   const matchesActive = !showActiveOnly || routine.isActive;
+
+  //   return matchesSearch && matchesType && matchesActive;
+  // });
 
   const getRoutineTypeInfo = (type: string) => {
     return routineTypes.find((t) => t.value === type) || routineTypes[2];
   };
 
   const getRoutineStats = () => {
-    const totalRoutines = mockRoutines.length;
-    const activeRoutines = mockRoutines.filter((r) => r.isActive).length;
-    const totalProducts = mockRoutines.reduce((sum, r) => sum + r.items.length, 0);
+    const totalRoutines = routines.length;
+    const activeRoutines = routines.filter((r) => r.isActive).length;
+    // Note: items count will be 0 since we're not fetching routine items in the list
+    const totalProducts = 0;
     const avgProductsPerRoutine = totalRoutines > 0 ? Math.round(totalProducts / totalRoutines) : 0;
 
     return { totalRoutines, activeRoutines, totalProducts, avgProductsPerRoutine };
@@ -204,7 +78,7 @@ export default function RoutinesPage() {
       <div className="grid grid-cols-1 md:grid-cols-4 md:gap-6 gap-4 mb-8">
         <StatCard variant="info" title="Total Routines" icon={Clock} stat={stats.totalRoutines} />
         <StatCard variant="success" title="Active Routines" icon={Play} stat={stats.activeRoutines} />
-        <StatCard variant="warning" title="Total Products" icon={Star} stat={stats.activeRoutines} />
+        <StatCard variant="warning" title="Total Products" icon={Star} stat={stats.totalProducts} />
         <StatCard variant="purple" title="Avg per Routine" icon={Plus} stat={stats.avgProductsPerRoutine} />
       </div>
 
@@ -249,88 +123,87 @@ export default function RoutinesPage() {
         </CardContent>
       </Card>
 
-      {/* Routines Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {filteredRoutines.map((routine) => {
-          const typeInfo = getRoutineTypeInfo(routine.type);
-          const TypeIcon = typeInfo.icon;
+      {/* Loading State */}
+      {isLoading && (
+        <Card className="text-center py-12">
+          <CardContent>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+            <p className="text-gray-500">Loading routines...</p>
+          </CardContent>
+        </Card>
+      )}
 
-          return (
-            <Card key={routine.id} className="hover:shadow-lg transition-shadow duration-200">
-              <CardHeader className="pb-4">
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <div className="flex items-center space-x-3 mb-2">
-                      <TypeIcon className={`h-5 w-5 ${typeInfo.color}`} />
-                      <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
-                        {routine.name}
-                      </CardTitle>
-                      <Badge variant={routine.isActive ? 'default' : 'secondary'} className="ml-auto">
-                        {routine.isActive ? 'Active' : 'Inactive'}
-                      </Badge>
-                    </div>
-                    <CardDescription className="text-gray-600 dark:text-gray-400">
-                      {routine.description}
-                    </CardDescription>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {/* Routine Steps */}
-                <div className="space-y-3">
-                  <h4 className="font-medium text-gray-900 dark:text-white">Steps:</h4>
-                  {routine.items.map((item) => (
-                    <div
-                      key={item.id}
-                      className="flex items-center space-x-3 p-3 bg-gray-50 dark:bg-slate-800 rounded-lg"
-                    >
-                      <div className="w-8 h-8 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center">
-                        <span className="text-sm font-medium text-indigo-600 dark:text-indigo-400">
-                          {item.order}
-                        </span>
-                      </div>
-                      <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900 dark:text-white">
-                          {item.product.name}
-                        </p>
-                        <p className="text-xs text-gray-500 dark:text-gray-400">
-                          {item.product.brand} • {item.product.category}
-                        </p>
-                        {item.notes && (
-                          <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">{item.notes}</p>
-                        )}
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <Badge variant="outline" className="text-xs">
-                          {item.frequency}
+      {/* Routines Grid */}
+      {!isLoading && routines.length > 0 && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {routines.map((routine) => {
+            const typeInfo = getRoutineTypeInfo(routine.type);
+            const TypeIcon = typeInfo.icon;
+
+            return (
+              <Card key={routine.id} className="hover:shadow-lg transition-shadow duration-200">
+                <CardHeader className="pb-4">
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <TypeIcon className={`h-5 w-5 ${typeInfo.color}`} />
+                        <CardTitle className="text-xl font-semibold text-gray-900 dark:text-white">
+                          {routine.name}
+                        </CardTitle>
+                        <Badge variant={routine.isActive ? 'default' : 'secondary'} className="ml-auto">
+                          {routine.isActive ? 'Active' : 'Inactive'}
                         </Badge>
                       </div>
+                      <CardDescription className="text-gray-600 dark:text-gray-400">
+                        {routine.description}
+                      </CardDescription>
                     </div>
-                  ))}
-                </div>
+                  </div>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  {/* Routine Info */}
+                  <div className="space-y-3">
+                    <h4 className="font-medium text-gray-900 dark:text-white">Routine Info:</h4>
+                    <div className="p-3 bg-gray-50 dark:bg-slate-800 rounded-lg">
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Type: <span className="font-medium capitalize">{routine.type}</span>
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Status:{' '}
+                        <span className="font-medium">{routine.isActive ? 'Active' : 'Inactive'}</span>
+                      </p>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">
+                        Created:{' '}
+                        <span className="font-medium">
+                          {new Date(routine.createdAt ?? '').toLocaleDateString()}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
 
-                {/* Actions */}
-                <div className="flex space-x-2 pt-4 border-t border-gray-200 dark:border-slate-700">
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
-                  </Button>
-                  <Button variant="outline" size="sm" className="flex-1">
-                    <Play className="h-4 w-4 mr-2" />
-                    Start
-                  </Button>
-                  <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
-      </div>
+                  {/* Actions */}
+                  <div className="flex space-x-2 pt-4 border-t border-gray-200 dark:border-slate-700">
+                    <Button variant="outline" size="sm" className="flex-1">
+                      <Edit className="h-4 w-4 mr-2" />
+                      Edit
+                    </Button>
+                    <Button variant="outline" size="sm" className="flex-1">
+                      <Play className="h-4 w-4 mr-2" />
+                      Start
+                    </Button>
+                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
+      )}
 
       {/* Empty State */}
-      {filteredRoutines.length === 0 && (
+      {!isLoading && routines.length === 0 && (
         <Card className="text-center py-12">
           <CardContent>
             <Clock className="h-16 w-16 text-gray-400 mx-auto mb-4" />
