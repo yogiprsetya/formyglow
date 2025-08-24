@@ -22,14 +22,18 @@ interface CreateRoutinePayload {
   }>;
 }
 
-export const useRoutines = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const router = useRouter();
+type Options = {
+  disabled?: boolean;
+};
 
+export const useRoutines = (opt?: Options) => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [keyword, setSearchKeyword] = useState('');
   const [routineTypes, setRoutineTypes] = useState<CreateRoutineFormData['type'] | 'all'>('all');
   const [page, setPage] = useState(1);
   // const [isActive, setIsActive] = useState(false);
+
+  const router = useRouter();
 
   const params = new URLSearchParams({
     keyword,
@@ -39,8 +43,8 @@ export const useRoutines = () => {
     page: page.toString()
   });
 
-  const { data, isLoading: isFetching } = useSWR<HttpResponse<SelectRoutine[]>>(
-    `routines?${params.toString()}`,
+  const { data, isLoading } = useSWR<HttpResponse<SelectRoutine[]>>(
+    opt?.disabled ? null : `routines?${params.toString()}`,
     {
       revalidateOnFocus: false,
       revalidateOnReconnect: true,
@@ -52,7 +56,7 @@ export const useRoutines = () => {
   const meta = data?.meta;
 
   const createRoutine = async (data: CreateRoutineFormData) => {
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     const payload: CreateRoutinePayload = {
       name: data.name,
@@ -78,7 +82,7 @@ export const useRoutines = () => {
 
         if (res.data.success) {
           toast.success('Routine berhasil dibuat!');
-          mutate('/api/routines');
+          mutate('routines');
           router.push('/space/routines');
           return { success: true };
         }
@@ -87,11 +91,11 @@ export const useRoutines = () => {
         return { success: false };
       })
       .catch(errorHandler)
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsSubmitting(false));
   };
 
   const updateRoutine = async (id: string, data: CreateRoutineFormData) => {
-    setIsLoading(true);
+    setIsSubmitting(true);
 
     const payload: CreateRoutinePayload = {
       name: data.name,
@@ -117,7 +121,7 @@ export const useRoutines = () => {
 
         if (res.data.success) {
           toast.success('Routine berhasil diperbarui!');
-          mutate('/api/routines');
+          mutate('routines');
           router.push('/space/routines');
           return { success: true };
         }
@@ -126,7 +130,31 @@ export const useRoutines = () => {
         return { success: false };
       })
       .catch(errorHandler)
-      .finally(() => setIsLoading(false));
+      .finally(() => setIsSubmitting(false));
+  };
+
+  const deleteRoutine = async (id: string) => {
+    setIsSubmitting(true);
+
+    return httpClient
+      .delete<HttpResponse<void>>(`routines/${id}`)
+      .then((res) => {
+        if (!res.data.success) {
+          toast.error(`Error! status: ${res.status}`);
+          return { success: false };
+        }
+
+        if (res.data.success) {
+          toast.success('Routine berhasil dihapus!');
+          mutate('routines');
+          return { success: true };
+        }
+
+        toast.error('Failed to delete routine');
+        return { success: false };
+      })
+      .catch(errorHandler)
+      .finally(() => setIsSubmitting(false));
   };
 
   const debouncedSearch = useDebouncedCallback(
@@ -141,9 +169,11 @@ export const useRoutines = () => {
   return {
     routines,
     meta,
-    isLoading: isLoading || isFetching,
+    isLoading,
+    isSubmitting,
     createRoutine,
     updateRoutine,
+    deleteRoutine,
     setSearchKeyword: debouncedSearch,
     setRoutineTypes,
     setPage

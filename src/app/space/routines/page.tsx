@@ -9,6 +9,15 @@ import { Plus, Clock, Sun, Moon, Star, Edit, Trash2, Play } from 'lucide-react';
 import Link from 'next/link';
 import { StatCard } from '~/components/common/stat-card';
 import { useRoutines } from './use-routines';
+import { SelectRoutine } from './schema';
+import dynamic from 'next/dynamic';
+
+const DialogDeleteRoutine = dynamic(
+  () => import('./dialog-delete-routine').then((m) => m.DialogDeleteRoutine),
+  {
+    ssr: false
+  }
+);
 
 const routineTypes = [
   { value: 'morning', label: 'Morning', icon: Sun, color: 'text-amber-600' },
@@ -20,18 +29,9 @@ export default function RoutinesPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedType, setSelectedType] = useState('all');
   const [showActiveOnly, setShowActiveOnly] = useState(false);
+  const [routineToDelete, setRoutineToDelete] = useState<Pick<SelectRoutine, 'id' | 'name'> | null>(null);
 
   const { routines, isLoading } = useRoutines();
-
-  // const filteredRoutines = routines.filter((routine) => {
-  //   const matchesSearch =
-  //     routine.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-  //     (routine.description && routine.description.toLowerCase().includes(searchTerm.toLowerCase()));
-  //   const matchesType = selectedType === 'all' || routine.type === selectedType;
-  //   const matchesActive = !showActiveOnly || routine.isActive;
-
-  //   return matchesSearch && matchesType && matchesActive;
-  // });
 
   const getRoutineTypeInfo = (type: string) => {
     return routineTypes.find((t) => t.value === type) || routineTypes[2];
@@ -195,7 +195,12 @@ export default function RoutinesPage() {
                       Start
                     </Button>
 
-                    <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                      onClick={() => setRoutineToDelete({ id: routine.id, name: routine.name })}
+                    >
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
@@ -226,6 +231,8 @@ export default function RoutinesPage() {
           </CardContent>
         </Card>
       )}
+
+      <DialogDeleteRoutine item={routineToDelete} onClose={() => setRoutineToDelete(null)} />
     </main>
   );
 }

@@ -17,13 +17,6 @@ const routineUpdateSchema = createInsertSchema(routines).omit({
   updatedAt: true
 });
 
-// Schema untuk update routine items
-// const routineItemUpdateSchema = createInsertSchema(routineItems).omit({
-//   id: true,
-//   routineId: true,
-//   createdAt: true
-// });
-
 // GET /api/routines/[id] - Get specific routine with items
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const routineId = params.id;

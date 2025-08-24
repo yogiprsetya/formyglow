@@ -33,14 +33,8 @@ export default function InventoryPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [showExpiring, setShowExpiring] = useState(false);
-  const [deleteDialog, setDeleteDialog] = useState<{
-    isOpen: boolean;
-    item: Pick<SelectInventory, 'id' | 'name'>;
-  } | null>(null);
-  const [viewDialog, setViewDialog] = useState<{
-    isOpen: boolean;
-    item: Partial<SelectInventory>;
-  } | null>(null);
+  const [deleteDialog, setDeleteDialog] = useState<Pick<SelectInventory, 'id' | 'name'> | undefined>();
+  const [viewDialog, setViewDialog] = useState<Partial<SelectInventory> | undefined>();
 
   const { data, isLoading } = useInventory();
 
@@ -72,16 +66,13 @@ export default function InventoryPage() {
 
   const handleDeleteClick = (itemId: string, itemName: string) => {
     setDeleteDialog({
-      isOpen: true,
-      item: {
-        id: itemId,
-        name: itemName
-      }
+      id: itemId,
+      name: itemName
     });
   };
 
   const handleViewClick = (item: { id: string; name: string }) => {
-    setViewDialog({ isOpen: true, item });
+    setViewDialog(item);
   };
 
   return (
@@ -315,13 +306,8 @@ export default function InventoryPage() {
         </Card>
       )}
 
-      {deleteDialog?.isOpen && (
-        <DialogDeleteInventory item={deleteDialog.item} onCancel={() => setDeleteDialog(null)} />
-      )}
-
-      {viewDialog?.isOpen && (
-        <DialogViewInventory item={viewDialog.item} onClose={() => setViewDialog(null)} />
-      )}
+      <DialogDeleteInventory item={deleteDialog} onClose={() => setDeleteDialog(undefined)} />
+      <DialogViewInventory item={viewDialog} onClose={() => setViewDialog(undefined)} />
     </main>
   );
 }

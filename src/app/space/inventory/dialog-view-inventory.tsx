@@ -1,14 +1,14 @@
 'use client';
 
 import { Button } from '~/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
-import { X, Package, Calendar, DollarSign, Hash, FileText, Eye } from 'lucide-react';
+import { Package, Calendar, DollarSign, Hash, FileText, Eye } from 'lucide-react';
 import Link from 'next/link';
 import type { SelectInventory } from './schema';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '~/components/ui/dialog';
 
 interface Props {
-  item: Partial<SelectInventory>;
+  item?: Partial<SelectInventory>;
   onClose: () => void;
 }
 
@@ -33,35 +33,28 @@ export const DialogViewInventory = ({ item, onClose }: Props) => {
     return diffDays;
   };
 
-  const isExpiringSoon = item.expiryDate ? getDaysUntilExpiry(item.expiryDate) <= 30 : false;
+  const isExpiringSoon = item?.expiryDate ? getDaysUntilExpiry(item.expiryDate) <= 30 : false;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
-      <Card className="max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-        <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-4">
-          <CardTitle className="flex items-center gap-2">
-            <Package className="h-5 w-5" />
-            Detail Produk
-          </CardTitle>
-          <Button variant="ghost" size="sm" onClick={onClose}>
-            <X className="h-4 w-4" />
-          </Button>
-        </CardHeader>
+    <Dialog open={!!item} onOpenChange={(state) => !state && onClose()}>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Detail Produk</DialogTitle>
+        </DialogHeader>
 
-        <CardContent className="space-y-6">
-          {/* Basic Information */}
+        <>
           <div className="space-y-4">
             <div>
-              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">{item.name}</h3>
-              <p className="text-gray-600 dark:text-gray-400 text-lg">{item.brand}</p>
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-1">{item?.name}</h3>
+              <p className="text-gray-600 dark:text-gray-400 text-lg">{item?.brand}</p>
             </div>
 
             <div className="flex flex-wrap gap-2">
               <Badge variant="secondary" className="capitalize">
-                {item.skincareTypes}
+                {item?.skincareTypes}
               </Badge>
 
-              {item.isOpen && (
+              {item?.isOpen && (
                 <Badge variant="outline" className="text-green-600 border-green-600">
                   <Eye className="h-3 w-3 mr-1" />
                   Open
@@ -83,32 +76,32 @@ export const DialogViewInventory = ({ item, onClose }: Props) => {
               <div className="flex items-center gap-2">
                 <DollarSign className="h-4 w-4 text-gray-400" />
                 <span className="text-gray-500 dark:text-gray-400">Harga:</span>
-                <span className="font-medium">{formatPrice(item.price ?? 0)}</span>
+                <span className="font-medium">{formatPrice(item?.price ?? 0)}</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <Package className="h-4 w-4 text-gray-400" />
                 <span className="text-gray-500 dark:text-gray-400">Ukuran:</span>
-                <span className="font-medium">{item.size}</span>
+                <span className="font-medium">{item?.size}</span>
               </div>
 
               <div className="flex items-center gap-2">
                 <Hash className="h-4 w-4 text-gray-400" />
                 <span className="text-gray-500 dark:text-gray-400">Quantity:</span>
-                <span className="font-medium">{item.quantity}</span>
+                <span className="font-medium">{item?.quantity}</span>
               </div>
             </div>
 
             <div className="space-y-3">
-              {item.purchaseDate && (
+              {item?.purchaseDate && (
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-400" />
                   <span className="text-gray-500 dark:text-gray-400">Dibeli:</span>
-                  <span className="font-medium">{formatDate(item.purchaseDate)}</span>
+                  <span className="font-medium">{formatDate(item?.purchaseDate)}</span>
                 </div>
               )}
 
-              {item.expiryDate && (
+              {item?.expiryDate && (
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-400" />
                   <span className="text-gray-500 dark:text-gray-400">Kadaluarsa:</span>
@@ -119,7 +112,7 @@ export const DialogViewInventory = ({ item, onClose }: Props) => {
                 </div>
               )}
 
-              {item.openedDate && (
+              {item?.openedDate && (
                 <div className="flex items-center gap-2">
                   <Calendar className="h-4 w-4 text-gray-400" />
                   <span className="text-gray-500 dark:text-gray-400">Dibuka:</span>
@@ -130,7 +123,7 @@ export const DialogViewInventory = ({ item, onClose }: Props) => {
           </div>
 
           {/* Notes */}
-          {item.notes && (
+          {item?.notes && (
             <div className="space-y-2">
               <div className="flex items-center gap-2">
                 <FileText className="h-4 w-4 text-gray-400" />
@@ -145,15 +138,15 @@ export const DialogViewInventory = ({ item, onClose }: Props) => {
           {/* Actions */}
           <div className="flex gap-3 pt-4 border-t">
             <Button variant="outline" asChild className="flex-1">
-              <Link href={`/space/inventory/edit/${item.id}`}>Edit Produk</Link>
+              <Link href={`/space/inventory/edit/${item?.id}`}>Edit Produk</Link>
             </Button>
 
             <Button variant="outline" onClick={onClose} className="flex-1">
               Tutup
             </Button>
           </div>
-        </CardContent>
-      </Card>
-    </div>
+        </>
+      </DialogContent>
+    </Dialog>
   );
 };

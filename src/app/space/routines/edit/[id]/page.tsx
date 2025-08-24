@@ -18,11 +18,14 @@ import { dayOfWeekOptions, routineFrequencyOptions, routineTypeOptions } from '.
 import { useRoutines } from '../../use-routines';
 import { useRoutineData } from '../../use-routine';
 import dynamic from 'next/dynamic';
-import { ListedProduct } from '../../listed-product';
 
 type NewItem = Pick<CreateRoutineItem, 'frequency' | 'notes' | 'repeatOn'>;
 
 const ProductPicker = dynamic(() => import('../../product-picker').then((m) => m.ProductPicker), {
+  ssr: false
+});
+
+const ListedProduct = dynamic(() => import('../../listed-product').then((m) => m.ListedProduct), {
   ssr: false
 });
 
@@ -42,14 +45,14 @@ export default function EditRoutinePage() {
 
   const formMethod = useForm<CreateRoutineFormData>({
     resolver: zodResolver(createRoutineFormSchema),
+    mode: 'onChange',
     defaultValues: {
       name: '',
       type: 'evening',
       description: '',
       isActive: true,
       items: []
-    },
-    mode: 'onChange'
+    }
   });
 
   const {
@@ -72,27 +75,24 @@ export default function EditRoutinePage() {
         type: routine.type,
         description: routine.description || '',
         isActive: routine.isActive ?? true,
-        items: routine.items.map((item) => {
-          return {
+        items: routine.items.map((item) => ({
+          id: item.id,
+          product: {
             id: item.id,
-            product: {
-              id: item.id,
-              name: item.product?.name || 'Unknown Product',
-              brand: item.product?.brand || 'Unknown Brand',
-              category: item.product?.skincareTypes || 'Unknown Category'
-            },
-            order: item.order,
-            frequency: item.frequency || 'daily',
-            notes: item.notes || '',
-            repeatOn: item.repeatOn || []
-          };
-        })
+            name: item.product?.name || 'Unknown Product',
+            brand: item.product?.brand || 'Unknown Brand',
+            category: item.product?.skincareTypes || 'Unknown Category'
+          },
+          order: item.order,
+          frequency: item.frequency || 'daily',
+          notes: item.notes || '',
+          repeatOn: item.repeatOn || []
+        }))
       };
 
       reset(formData);
     }
   }, [routine, reset, isDirty]);
-  console.log(fields);
 
   const onSubmit = async (data: CreateRoutineFormData) => {
     try {

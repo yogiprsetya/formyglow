@@ -2,29 +2,23 @@
 
 import { Button } from '~/components/ui/button';
 import { Trash2, AlertTriangle, Loader2 } from 'lucide-react';
-import { useInventory } from './use-inventory';
-import type { SelectInventory } from './schema';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle
-} from '~/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '~/components/ui/dialog';
+import { DialogDescription } from '@radix-ui/react-dialog';
+import { useRoutines } from './use-routines';
+import { SelectRoutine } from './schema';
 
 interface Props {
   onClose: () => void;
-  item?: Pick<SelectInventory, 'id' | 'name'>;
+  item: Pick<SelectRoutine, 'id' | 'name'> | null;
 }
 
-export const DialogDeleteInventory = ({ item, onClose }: Props) => {
-  const { deleteProduct, isSubmitting } = useInventory({ disabled: !item });
+export const DialogDeleteRoutine = ({ item, onClose }: Props) => {
+  const { deleteRoutine, isSubmitting } = useRoutines({ disabled: !item });
 
   if (!item) return null;
 
-  const handleDelete = async () => {
-    const { success } = await deleteProduct(item.id);
+  const cancelDelete = async () => {
+    const { success } = await deleteRoutine(item.id);
     if (success) onClose();
   };
 
@@ -41,17 +35,17 @@ export const DialogDeleteInventory = ({ item, onClose }: Props) => {
           </DialogTitle>
 
           <DialogDescription>
-            Apakah Anda yakin ingin menghapus <b>{item.name}</b> dari inventory? Tindakan ini tidak dapat
+            Apakah Anda yakin ingin menghapus routine <b>{item?.name}</b> ini? Tindakan ini tidak dapat
             dibatalkan.
           </DialogDescription>
         </DialogHeader>
 
         <DialogFooter>
-          <Button variant="outline" onClick={onClose} disabled={isSubmitting} className="flex-1">
+          <Button variant="outline" onClick={onClose} className="flex-1">
             Batal
           </Button>
 
-          <Button variant="destructive" onClick={handleDelete} disabled={isSubmitting} className="flex-1">
+          <Button variant="destructive" onClick={cancelDelete} className="flex-1">
             {isSubmitting ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
