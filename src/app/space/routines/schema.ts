@@ -1,5 +1,6 @@
 import { InferSelectModel } from 'drizzle-orm';
 import { z } from 'zod';
+import { inventory } from '~/db/schema/inventory';
 import {
   routineFrequencyEnum,
   routineItems,
@@ -26,7 +27,7 @@ export const createRoutineFormSchema = z.object({
         order: z.number(),
         frequency: z.enum(routineFrequencyEnum.enumValues),
         notes: z.string().optional(),
-        repeatedOn: z.array(z.enum(dayOfWeekEnum.enumValues)).optional()
+        repeatOn: z.array(z.enum(dayOfWeekEnum.enumValues)).optional()
       })
     )
     .min(1, 'Minimal harus ada 1 produk')
@@ -36,7 +37,7 @@ export const createRoutineFormSchema = z.object({
 export const editRoutineItemFormSchema = z.object({
   order: z.number().min(1, 'Urutan harus diisi'),
   frequency: z.enum(routineFrequencyEnum.enumValues),
-  repeatedOn: z.array(z.string()).optional(),
+  repeatOn: z.array(z.string()).optional(),
   notes: z.string().optional()
 });
 
@@ -45,7 +46,9 @@ export type EditRoutineItemFormData = z.infer<typeof editRoutineItemFormSchema>;
 export type CreateRoutineItem = CreateRoutineFormData['items'][number];
 
 type Routine = InferSelectModel<typeof routines>;
-type RoutineItem = InferSelectModel<typeof routineItems>;
+type RoutineItem = InferSelectModel<typeof routineItems> & {
+  product: InferSelectModel<typeof inventory>;
+};
 
 export interface SelectRoutine extends Routine {
   items: RoutineItem[];

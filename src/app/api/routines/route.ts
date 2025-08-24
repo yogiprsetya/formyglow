@@ -34,7 +34,7 @@ export async function GET(req: NextRequest) {
   const params = {
     limit: searchParams.get('limit'),
     page: searchParams.get('page'),
-    type: searchParams.get('type') as z.infer<typeof routineSchema>['type'], // morning, evening, custom
+    type: searchParams.get('type') as z.infer<typeof routineSchema>['type'] | 'all', // morning, evening, custom
     isActive: searchParams.get('isActive') // true, false
   };
 
@@ -46,7 +46,7 @@ export async function GET(req: NextRequest) {
       // Build filter conditions
       const filters = [eq(routines.userId, session.user.id)];
 
-      if (params.type) {
+      if (params.type && params.type !== 'all') {
         filters.push(eq(routines.type, params.type));
       }
 

@@ -183,14 +183,18 @@ export default function RoutinesPage() {
 
                   {/* Actions */}
                   <div className="flex space-x-2 pt-4 border-t border-gray-200 dark:border-slate-700">
-                    <Button variant="outline" size="sm" className="flex-1">
-                      <Edit className="h-4 w-4 mr-2" />
-                      Edit
+                    <Button asChild variant="outline" size="sm" className="flex-1">
+                      <Link href={`/space/routines/edit/${routine.id}`}>
+                        <Edit className="h-4 w-4 mr-2" />
+                        Edit
+                      </Link>
                     </Button>
+
                     <Button variant="outline" size="sm" className="flex-1">
                       <Play className="h-4 w-4 mr-2" />
                       Start
                     </Button>
+
                     <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700">
                       <Trash2 className="h-4 w-4" />
                     </Button>

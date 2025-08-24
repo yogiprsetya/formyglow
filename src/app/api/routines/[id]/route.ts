@@ -7,6 +7,7 @@ import { handleSuccessResponse } from '../../handle-success-res';
 import { handleExpiredSession, handleInvalidRequest } from '../../handle-error-res';
 import { bodyParse } from '../../body-parse';
 import { routineItems, routines } from '~/db/schema/routines';
+import { inventory } from '~/db/schema/inventory';
 
 // Schema untuk update routine
 const routineUpdateSchema = createInsertSchema(routines).omit({
@@ -40,10 +41,35 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
           return handleInvalidRequest('Routine not found');
         }
 
-        // Get routine items
+        // Get routine items with inventory data using join
         const items = await db
-          .select()
+          .select({
+            id: routineItems.id,
+            routineId: routineItems.routineId,
+            inventoryId: routineItems.inventoryId,
+            order: routineItems.order,
+            frequency: routineItems.frequency,
+            repeatOn: routineItems.repeatOn,
+            notes: routineItems.notes,
+            createdAt: routineItems.createdAt,
+            // Inventory data
+            product: {
+              id: inventory.id,
+              name: inventory.name,
+              brand: inventory.brand,
+              size: inventory.size,
+              skincareTypes: inventory.skincareTypes,
+              quantity: inventory.quantity,
+              price: inventory.price,
+              purchaseDate: inventory.purchaseDate,
+              expiryDate: inventory.expiryDate,
+              openedDate: inventory.openedDate,
+              isOpen: inventory.isOpen,
+              notes: inventory.notes
+            }
+          })
           .from(routineItems)
+          .innerJoin(inventory, eq(routineItems.inventoryId, inventory.id))
           .where(eq(routineItems.routineId, routineId))
           .orderBy(routineItems.order);
 

@@ -17,7 +17,7 @@ interface CreateRoutinePayload {
     inventoryId: string;
     order: number;
     frequency: CreateRoutineItem['frequency'];
-    repeatOn: CreateRoutineItem['repeatedOn'];
+    repeatOn: CreateRoutineItem['repeatOn'];
     notes?: string;
   }>;
 }
@@ -63,7 +63,7 @@ export const useRoutines = () => {
         inventoryId: item.product.id,
         order: item.order,
         frequency: item.frequency,
-        repeatOn: item.frequency === 'weekly' ? item.repeatedOn : undefined,
+        repeatOn: item.frequency === 'weekly' ? item.repeatOn : undefined,
         notes: item.notes
       }))
     };
@@ -90,6 +90,45 @@ export const useRoutines = () => {
       .finally(() => setIsLoading(false));
   };
 
+  const updateRoutine = async (id: string, data: CreateRoutineFormData) => {
+    setIsLoading(true);
+
+    const payload: CreateRoutinePayload = {
+      name: data.name,
+      type: data.type,
+      description: data.description,
+      isActive: data.isActive,
+      items: data.items.map((item) => ({
+        inventoryId: item.product.id,
+        order: item.order,
+        frequency: item.frequency,
+        repeatOn: item.frequency === 'weekly' ? item.repeatOn : undefined,
+        notes: item.notes
+      }))
+    };
+
+    return httpClient
+      .put<HttpResponse<SelectRoutine>>(`routines/${id}`, payload)
+      .then((res) => {
+        if (!res.data.success) {
+          toast.error(`Error! status: ${res.status}`);
+          return { success: false };
+        }
+
+        if (res.data.success) {
+          toast.success('Routine berhasil diperbarui!');
+          mutate('/api/routines');
+          router.push('/space/routines');
+          return { success: true };
+        }
+
+        toast.error('Failed to update routine');
+        return { success: false };
+      })
+      .catch(errorHandler)
+      .finally(() => setIsLoading(false));
+  };
+
   const debouncedSearch = useDebouncedCallback(
     (q: string) => {
       setSearchKeyword(q);
@@ -104,6 +143,7 @@ export const useRoutines = () => {
     meta,
     isLoading: isLoading || isFetching,
     createRoutine,
+    updateRoutine,
     setSearchKeyword: debouncedSearch,
     setRoutineTypes,
     setPage

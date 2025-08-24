@@ -111,6 +111,7 @@ export const useInventory = (opt?: Options) => {
     updateProduct,
     deleteProduct,
     isSubmitting,
+    keyword,
     setSearchKeyword: useDebouncedCallback((q: string) => setSearchKeyword(q), 500),
     setSort,
     setPage,
