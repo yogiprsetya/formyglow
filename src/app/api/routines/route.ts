@@ -1,5 +1,5 @@
 import { NextRequest } from 'next/server';
-import { db, routines, routineItems } from '~/db';
+import { db } from '~/db/config';
 import { eq, desc, and } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { createMeta } from '../create-meta';
@@ -8,6 +8,7 @@ import { handleSuccessResponse } from '../handle-success-res';
 import { handleExpiredSession, handleInvalidRequest } from '../handle-error-res';
 import { bodyParse } from '../body-parse';
 import z from 'zod';
+import { routineItems, routines } from '~/db/schema/routines';
 
 const routineSchema = createInsertSchema(routines).omit({
   userId: true,

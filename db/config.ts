@@ -26,9 +26,3 @@ const db = drizzle(client, {
 });
 
 export { db };
-export * from './schema/users';
-export * from './schema/profiles';
-export * from './schema/inventory';
-export * from './schema/routines';
-export * from './schema/progress';
-export * from './schema/skincare';

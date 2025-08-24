@@ -1,6 +1,6 @@
 import { type SQL, sql } from 'drizzle-orm';
 import { PgTable } from 'drizzle-orm/pg-core';
-import { db } from '~/db';
+import { db } from '~/db/config';
 
 type CreateMetaParams = {
   table: PgTable;

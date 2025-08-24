@@ -19,8 +19,7 @@
     ],
     "paths": {
       "~/*": ["./src/*"],
-      "~/db/*": ["./db/*"],
-      "~/db": ["./db/index.ts"]
+      "~/db/*": ["./db/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

@@ -1,5 +1,5 @@
 import { ingredients } from './schema/skincare';
-import { db } from './';
+import { db } from './config';
 
 const skincareIngredients = [
   {

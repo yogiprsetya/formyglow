@@ -1,11 +1,12 @@
 import { NextRequest } from 'next/server';
-import { db, routines, routineItems } from '~/db';
+import { db } from '~/db/config';
 import { eq, and } from 'drizzle-orm';
 import { createInsertSchema } from 'drizzle-zod';
 import { requireUserAuth } from '../../protect-route';
 import { handleSuccessResponse } from '../../handle-success-res';
 import { handleExpiredSession, handleInvalidRequest } from '../../handle-error-res';
 import { bodyParse } from '../../body-parse';
+import { routineItems, routines } from '~/db/schema/routines';
 
 // Schema untuk update routine
 const routineUpdateSchema = createInsertSchema(routines).omit({

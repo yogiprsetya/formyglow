@@ -1,11 +1,12 @@
 import { NextRequest } from 'next/server';
-import { db, inventory } from '~/db';
+import { db } from '~/db/config';
 import { eq } from 'drizzle-orm';
 import { createUpdateSchema } from 'drizzle-zod';
 import { requireUserAuth } from '../../protect-route';
 import { handleSuccessResponse } from '../../handle-success-res';
 import { handleDataNotFound, handleExpiredSession, handleInvalidRequest } from '../../handle-error-res';
 import { bodyParse } from '../../body-parse';
+import { inventory } from '~/db/schema/inventory';
 
 const schema = createUpdateSchema(inventory);
 
