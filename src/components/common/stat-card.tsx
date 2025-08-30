@@ -45,7 +45,7 @@ export const StatCard: FC<Props> = ({ variant, icon, ...props }) => {
     <Card className={cn(mainStyles, 'bg-gradient-to-br', props.classNames)}>
       <CardContent className="p-4">
         <div className="flex items-center space-x-3">
-          <If condition={icon}>
+          <If condition={!!icon}>
             <Icon className={cn('size-8', titleClasses)} />
           </If>
 
@@ -53,7 +53,7 @@ export const StatCard: FC<Props> = ({ variant, icon, ...props }) => {
             <p className={cn('text-sm font-medium', titleClasses)}>{props.title}</p>
             <p className={cn('text-2xl font-bold', statClasses)}>{props.stat}</p>
 
-            <If condition={props.textHelper}>
+            <If condition={!!props.textHelper}>
               <p className={cn('text-xs', titleClasses)}>{props.textHelper}</p>
             </If>
           </div>

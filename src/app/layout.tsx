@@ -19,9 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <NextAuthProvider>
             <SWRProvider>
-              <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
-                {children}
-              </div>
+              <div className="min-h-screen bg-background">{children}</div>
             </SWRProvider>
           </NextAuthProvider>
         </ThemeProvider>

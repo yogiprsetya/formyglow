@@ -1,19 +1,7 @@
 import { Button } from '~/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '~/components/ui/card';
 import { Badge } from '~/components/ui/badge';
-import {
-  Check,
-  Sparkles,
-  Smartphone,
-  Zap,
-  Shield,
-  Heart,
-  Star,
-  Camera,
-  TrendingUp,
-  Package,
-  Clock
-} from 'lucide-react';
+import { Check, Sparkles, Smartphone, Zap, Shield, Heart, Star, Camera, Package, Clock } from 'lucide-react';
 import Link from 'next/link';
 import dynamic from 'next/dynamic';
 import { Skeleton } from '~/components/ui/skeleton';
@@ -27,15 +15,15 @@ export default function LandingPage() {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="bg-white/80 dark:bg-slate-900/80 backdrop-blur-sm border-b border-gray-200 dark:border-slate-700 sticky top-0 z-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <header className="bg-background border-b border-border sticky top-0 z-50">
+        <div className="max-w-7xl mx-auto container-padding">
           <div className="flex items-center justify-between h-16">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-lg flex items-center justify-center">
+            <div className="flex items-center space-x-3">
+              <div className="flex items-center space-x-3">
+                <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
                   <Sparkles className="h-5 w-5 text-white" />
                 </div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">FormyGlow</h1>
+                <h1 className="text-xl font-semibold accent-text">FormyGlow</h1>
               </div>
             </div>
 
@@ -45,25 +33,25 @@ export default function LandingPage() {
       </header>
 
       {/* Hero Section */}
-      <section className="bg-gradient-to-br from-indigo-50 via-white to-purple-50 dark:from-slate-900 dark:via-slate-800 dark:to-purple-900 py-20">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section className="section-padding bg-miro-primary">
+        <div className="max-w-7xl mx-auto container-padding text-center">
           <div className="max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl font-bold text-gray-900 dark:text-white mb-6">
+            <Badge variant="miro" size="lg" className="mb-6">
+              ✨ Skincare Management Made Simple
+            </Badge>
+            <h1 className="text-4xl md:text-5xl lg:text-6xl font-semibold text-foreground mb-8 leading-tight">
               Kelola Skincare
-              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
-                {' '}
-                Lebih Pintar
-              </span>
+              <span className="accent-text block mt-2">Lebih Pintar</span>
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 leading-relaxed">
+            <p className="text-xl md:text-2xl text-muted-foreground mb-10 leading-relaxed max-w-3xl mx-auto">
               Aplikasi skincare management yang dapat diinstall, tidak membebani memori smartphone, dan
               membantu Anda mencapai kulit sehat dengan rutinitas yang terstruktur.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button asChild size="lg" className="text-lg px-8 py-4">
+              <Button asChild size="lg" variant="miro" className="btn-miro text-lg px-8 py-4">
                 <Link href="/space">Mulai Gratis</Link>
               </Button>
-              <Button asChild size="lg" variant="outline" className="text-lg px-8 py-4">
+              <Button asChild size="lg" variant="outline" className="btn-miro text-lg px-8 py-4">
                 <Link href="#pricing">Lihat Pricing</Link>
               </Button>
             </div>
@@ -72,93 +60,89 @@ export default function LandingPage() {
       </section>
 
       {/* Benefits Section */}
-      <section className="py-20 bg-white dark:bg-slate-900">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="section-padding bg-clean">
+        <div className="max-w-7xl mx-auto container-padding">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6">
               Mengapa Memilih FormyGlow?
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Fitur-fitur unggulan yang membuat skincare management menjadi lebih mudah dan efektif
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-            <Card className="text-center p-6 border-0 shadow-lg hover:shadow-xl transition-shadow">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <Card className="card-miro text-center group">
               <CardContent className="p-6">
-                <div className="w-16 h-16 bg-indigo-100 dark:bg-indigo-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Smartphone className="h-8 w-8 text-indigo-600 dark:text-indigo-400" />
+                <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:from-blue-200 group-hover:to-indigo-200 transition-all duration-300">
+                  <Smartphone className="h-8 w-8 text-blue-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Installable PWA</h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                <h3 className="text-xl font-semibold text-foreground mb-3">Installable PWA</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   Dapat diinstall langsung ke smartphone seperti aplikasi native, tidak membebani memori
                   karena menggunakan teknologi PWA.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="card-miro text-center group">
               <CardContent className="p-6">
-                <div className="w-16 h-16 bg-green-100 dark:bg-green-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Zap className="h-8 w-8 text-green-600 dark:text-green-400" />
+                <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:from-purple-200 group-hover:to-pink-200 transition-all duration-300">
+                  <Zap className="h-8 w-8 text-purple-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Hemat Memori</h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                <h3 className="text-xl font-semibold text-foreground mb-3">Hemat Memori</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   Menggunakan Progressive Web App yang ringan dan efisien, tidak memakan ruang penyimpanan
                   berlebihan.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="card-miro text-center group">
               <CardContent className="p-6">
-                <div className="w-16 h-16 bg-purple-100 dark:bg-purple-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Shield className="h-8 w-8 text-purple-600 dark:text-purple-400" />
+                <div className="w-16 h-16 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:from-green-200 group-hover:to-emerald-200 transition-all duration-300">
+                  <Shield className="h-8 w-8 text-green-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Keamanan Data</h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                <h3 className="text-xl font-semibold text-foreground mb-3">Keamanan Data</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   Data skincare Anda aman dan tersimpan dengan baik, dengan enkripsi dan backup otomatis.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="card-miro text-center group">
               <CardContent className="p-6">
-                <div className="w-16 h-16 bg-pink-100 dark:bg-pink-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Heart className="h-8 w-8 text-pink-600 dark:text-pink-400" />
+                <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-red-100 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:from-orange-200 group-hover:to-red-200 transition-all duration-300">
+                  <Heart className="h-8 w-8 text-orange-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">Personalisasi</h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                <h3 className="text-xl font-semibold text-foreground mb-3">Personalisasi</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   Rutinitas skincare yang disesuaikan dengan jenis kulit, kondisi, dan preferensi pribadi
                   Anda.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="card-miro text-center group">
               <CardContent className="p-6">
-                <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Star className="h-8 w-8 text-amber-600 dark:text-amber-400" />
+                <div className="w-16 h-16 bg-gradient-to-br from-yellow-100 to-amber-100 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:from-yellow-200 group-hover:to-amber-200 transition-all duration-300">
+                  <Star className="h-8 w-8 text-yellow-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                  Tracking Progress
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                <h3 className="text-xl font-semibold text-foreground mb-3">Tracking Progress</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   Pantau kemajuan skincare Anda dengan foto dan catatan, lihat perubahan kulit dari waktu ke
                   waktu.
                 </p>
               </CardContent>
             </Card>
 
-            <Card className="text-center p-6 border-0 shadow-lg hover:shadow-xl transition-shadow">
+            <Card className="card-miro text-center group">
               <CardContent className="p-6">
-                <div className="w-16 h-16 bg-blue-100 dark:bg-blue-900 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Sparkles className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+                <div className="w-16 h-16 bg-gradient-to-br from-teal-100 to-cyan-100 rounded-xl flex items-center justify-center mx-auto mb-4 group-hover:from-teal-200 group-hover:to-cyan-200 transition-all duration-300">
+                  <Sparkles className="h-8 w-8 text-teal-600" />
                 </div>
-                <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">
-                  AI Recommendations
-                </h3>
-                <p className="text-gray-600 dark:text-gray-300">
+                <h3 className="text-xl font-semibold text-foreground mb-3">AI Recommendations</h3>
+                <p className="text-muted-foreground leading-relaxed">
                   Rekomendasi produk dan rutinitas berdasarkan analisis AI yang memahami kebutuhan kulit Anda.
                 </p>
               </CardContent>
@@ -168,13 +152,13 @@ export default function LandingPage() {
       </section>
 
       {/* Features Preview Section */}
-      <section className="py-20 bg-gray-50 dark:bg-slate-800">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <section className="section-padding bg-miro-secondary">
+        <div className="max-w-7xl mx-auto container-padding">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6">
               Fitur Lengkap untuk Skincare Management
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
               Semua yang Anda butuhkan untuk mengelola skincare dalam satu aplikasi
             </p>
           </div>
@@ -182,14 +166,12 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="space-y-8">
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-indigo-100 dark:bg-indigo-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Package className="h-6 w-6 text-indigo-600 dark:text-indigo-400" />
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Package className="h-6 w-6 text-blue-600" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                    Inventory Management
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Inventory Management</h3>
+                  <p className="text-muted-foreground leading-relaxed">
                     Kelola semua produk skincare Anda dengan mudah. Catat tanggal kadaluarsa, stok, dan
                     informasi produk secara terorganisir.
                   </p>
@@ -197,72 +179,52 @@ export default function LandingPage() {
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-green-100 dark:bg-green-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Clock className="h-6 w-6 text-green-600 dark:text-green-400" />
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-pink-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Clock className="h-6 w-6 text-purple-600" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                    Routine Builder
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Buat rutinitas skincare pagi dan malam yang sesuai dengan jenis kulit Anda. Drag & drop
-                    interface yang intuitif.
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Routine Scheduler</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Atur jadwal skincare harian, mingguan, dan bulanan. Dapatkan notifikasi tepat waktu untuk
+                    setiap langkah rutinitas.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-purple-100 dark:bg-purple-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <Camera className="h-6 w-6 text-purple-600 dark:text-purple-400" />
+                <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-emerald-100 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <Camera className="h-6 w-6 text-green-600" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                    Progress Tracking
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Dokumentasikan kemajuan skincare dengan foto before/after dan catatan. Lihat perubahan
-                    kulit dari waktu ke waktu.
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-pink-100 dark:bg-pink-900 rounded-lg flex items-center justify-center flex-shrink-0">
-                  <TrendingUp className="h-6 w-6 text-pink-600 dark:text-pink-400" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-2">
-                    Analytics & Insights
-                  </h3>
-                  <p className="text-gray-600 dark:text-gray-300">
-                    Dapatkan insight tentang efektivitas produk dan rutinitas. Analisis data untuk optimasi
-                    skincare routine.
+                  <h3 className="text-xl font-semibold text-foreground mb-2">Progress Tracking</h3>
+                  <p className="text-muted-foreground leading-relaxed">
+                    Dokumentasikan kemajuan kulit Anda dengan foto dan catatan. Lihat perubahan dari waktu ke
+                    waktu dengan visual yang jelas.
                   </p>
                 </div>
               </div>
             </div>
 
             <div className="relative">
-              <div className="bg-gradient-to-br from-indigo-100 to-purple-100 dark:from-indigo-900 dark:to-purple-900 rounded-2xl p-8">
-                <div className="bg-white dark:bg-slate-800 rounded-xl p-6 shadow-lg">
-                  <div className="flex items-center space-x-3 mb-4">
-                    <div className="w-3 h-3 bg-red-500 rounded-full"></div>
-                    <div className="w-3 h-3 bg-yellow-500 rounded-full"></div>
-                    <div className="w-3 h-3 bg-green-500 rounded-full"></div>
-                  </div>
+              <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-xl p-6 border border-border/60">
+                <div className="bg-card rounded-lg p-4 border border-border/60">
                   <div className="space-y-3">
-                    <div className="h-4 bg-gray-200 dark:bg-slate-600 rounded w-3/4"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-slate-600 rounded w-1/2"></div>
-                    <div className="h-4 bg-gray-200 dark:bg-slate-600 rounded w-5/6"></div>
-                  </div>
-                  <div className="mt-6 grid grid-cols-2 gap-4">
-                    <div className="bg-indigo-50 dark:bg-indigo-900/20 rounded-lg p-3">
-                      <div className="h-8 bg-indigo-200 dark:bg-indigo-700 rounded mb-2"></div>
-                      <div className="h-3 bg-indigo-200 dark:bg-indigo-700 rounded w-2/3"></div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                      <span className="text-xs text-muted-foreground">Morning Routine</span>
                     </div>
-                    <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3">
-                      <div className="h-8 bg-purple-200 dark:bg-purple-700 rounded mb-2"></div>
-                      <div className="h-3 bg-purple-200 dark:bg-purple-700 rounded w-1/2"></div>
+                    <div className="space-y-1">
+                      <div className="h-1.5 bg-blue-200 rounded-full"></div>
+                      <div className="h-1.5 bg-blue-200 rounded-full w-3/4"></div>
+                      <div className="h-1.5 bg-blue-200 rounded-full w-1/2"></div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                      <span className="text-xs text-muted-foreground">Evening Routine</span>
+                    </div>
+                    <div className="space-y-1">
+                      <div className="h-1.5 bg-purple-200 rounded-full w-2/3"></div>
+                      <div className="h-1.5 bg-purple-200 rounded-full w-1/3"></div>
                     </div>
                   </div>
                 </div>
@@ -416,23 +378,20 @@ export default function LandingPage() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-20 bg-gradient-to-r from-indigo-600 to-purple-600">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-white mb-6">Siap Memulai Perjalanan Skincare Anda?</h2>
-          <p className="text-xl text-indigo-100 mb-8">
-            Bergabunglah dengan ribuan pengguna yang telah mencapai kulit sehat dengan FormyGlow
+      <section className="section-padding bg-miro-accent">
+        <div className="max-w-4xl mx-auto container-padding text-center">
+          <h2 className="text-3xl md:text-4xl font-semibold text-foreground mb-6">
+            Siap Memulai Perjalanan Skincare?
+          </h2>
+          <p className="text-xl text-muted-foreground mb-10 leading-relaxed">
+            Bergabunglah dengan ribuan pengguna yang telah merasakan manfaat FormyGlow
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" variant="secondary" className="text-lg px-8 py-4">
+            <Button asChild size="lg" variant="miro" className="btn-miro text-lg px-8 py-4">
               <Link href="/space">Mulai Sekarang</Link>
             </Button>
-            <Button
-              asChild
-              size="lg"
-              variant="outline"
-              className="text-lg px-8 py-4 border-white text-white hover:bg-white hover:text-indigo-600"
-            >
-              <Link href="/signin">Sign In</Link>
+            <Button asChild size="lg" variant="outline" className="btn-miro text-lg px-8 py-4">
+              <Link href="/signin">Daftar Gratis</Link>
             </Button>
           </div>
         </div>

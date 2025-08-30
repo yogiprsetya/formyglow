@@ -15,11 +15,11 @@ export const HeaderAction = () => {
   return (
     <div className="flex items-center space-x-4">
       {status === 'authenticated' ? (
-        <Button asChild>
+        <Button asChild variant="miro" className="btn-miro">
           <Link href="/space">My Personal Space</Link>
         </Button>
       ) : (
-        <Button asChild variant="outline">
+        <Button asChild variant="outline" className="btn-miro">
           <Link href="/signin">Sign In</Link>
         </Button>
       )}

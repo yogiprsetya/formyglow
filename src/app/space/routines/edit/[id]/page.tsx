@@ -330,8 +330,6 @@ export default function EditRoutinePage() {
                         }))
                       }
                       className="justify-start"
-                      variant="outline"
-                      size="lg"
                     >
                       {dayOfWeekOptions.map((day) => (
                         <ToggleGroupItem key={day.value} value={day.value}>

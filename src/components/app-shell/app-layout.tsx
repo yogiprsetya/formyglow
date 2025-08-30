@@ -18,7 +18,7 @@ export function AppLayout({ children }: AppLayoutProps) {
       {/* Main Content */}
       <div className="flex-1 flex flex-col w-full min-w-0">
         {/* Mobile Header with Menu Button */}
-        <header className="md:hidden flex items-center justify-between p-4 bg-slate-900/10 flex-shrink-0">
+        <header className="md:hidden flex items-center justify-between p-4 bg-card border-b border-border flex-shrink-0">
           <Logo />
           <SidebarMenu />
         </header>

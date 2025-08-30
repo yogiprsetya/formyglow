@@ -32,7 +32,7 @@ export function SidebarMenu() {
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" size="icon" className="md:hidden">
+        <Button variant="outline" size="icon" className="md:hidden border-border hover:border-primary/50">
           <Menu className="h-4 w-4" />
           <span className="sr-only">Toggle menu</span>
         </Button>
@@ -41,7 +41,7 @@ export function SidebarMenu() {
       <SheetContent side="left" className="w-[280px] sm:w-[320px]">
         <SheetHeader className="pb-6 flex-row gap-2 space-y-0">
           <ProfilePicture />
-          <span className="font-semibold leading-8 text-sm">Personal Space</span>
+          <span className="font-semibold leading-8 text-sm text-foreground">Personal Space</span>
         </SheetHeader>
 
         <div className="flex flex-col h-[calc(100%-32px)]">
@@ -56,11 +56,20 @@ export function SidebarMenu() {
                   href={item.href}
                   onClick={() => setOpen(false)}
                   className={cn(
-                    'flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
-                    item.href === pathname ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
+                    'flex items-center gap-3 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-accent hover:text-accent-foreground',
+                    item.href === pathname
+                      ? 'bg-primary/10 text-primary border border-primary/20'
+                      : 'text-muted-foreground hover:text-foreground'
                   )}
                 >
-                  <Icon className="size-4" />
+                  <Icon
+                    className={cn(
+                      'h-4 w-4 transition-colors duration-200',
+                      item.href === pathname
+                        ? 'text-primary'
+                        : 'text-muted-foreground group-hover:text-foreground'
+                    )}
+                  />
                   {item.title}
                 </Link>
               );
@@ -72,7 +81,7 @@ export function SidebarMenu() {
             <Button
               variant="outline"
               onClick={handleLogout}
-              className="w-full justify-start gap-3 text-red-600 hover:text-red-700 hover:bg-red-50"
+              className="w-full justify-start gap-3 text-destructive hover:text-destructive hover:bg-destructive/10 hover:border-destructive/30 transition-colors duration-200"
             >
               <LogOut className="h-4 w-4" />
               Logout
